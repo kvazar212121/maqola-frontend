@@ -16,9 +16,11 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
   allAuthors
 }) => {
   const [activeTab, setActiveTab] = useState<'categories' | 'tags' | 'authors' | 'sort' | null>(null);
+  const [authorSearchQuery, setAuthorSearchQuery] = useState('');
 
   const toggleTab = (tab: 'categories' | 'tags' | 'authors' | 'sort') => {
     setActiveTab(prev => (prev === tab ? null : tab));
+    setAuthorSearchQuery('');
   };
 
   const toggleCategory = (category: string) => {
@@ -221,60 +223,96 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
           )}
 
           {/* MUALLIFLAR */}
-          {activeTab === 'authors' && (
-            <div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '14px', borderBottom: '1px solid var(--border-color)', paddingBottom: '8px' }}>
-                <h5 style={{ fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--text-primary)' }}>Mualliflar bo'yicha saralash</h5>
-                <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Bir nechta tanlash mumkin</span>
+          {activeTab === 'authors' && (() => {
+            const filteredAuthors = allAuthors.filter(author => 
+              author.name.toLowerCase().includes(authorSearchQuery.toLowerCase()) ||
+              (author.institution && author.institution.toLowerCase().includes(authorSearchQuery.toLowerCase()))
+            );
+            return (
+              <div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '14px', borderBottom: '1px solid var(--border-color)', paddingBottom: '8px', alignItems: 'center' }}>
+                  <h5 style={{ fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--text-primary)' }}>Mualliflar bo'yicha saralash</h5>
+                  <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Bir nechta tanlash mumkin</span>
+                </div>
+                
+                {/* Mualliflarni qidirish maydoni */}
+                <div style={{ marginBottom: '16px', width: '100%' }}>
+                  <input
+                    type="text"
+                    placeholder="Muallif ismi yoki tashkilotini qidiring..."
+                    value={authorSearchQuery}
+                    onChange={(e) => setAuthorSearchQuery(e.target.value)}
+                    className="sharp-input"
+                    style={{
+                      padding: '8px 12px',
+                      fontSize: '13px',
+                      height: '36px',
+                      boxShadow: 'none'
+                    }}
+                  />
+                </div>
+
+                <div style={{ 
+                  display: 'grid', 
+                  gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', 
+                  gap: '12px',
+                  maxHeight: '220px',
+                  overflowY: 'auto',
+                  paddingRight: '6px'
+                }}>
+                  {filteredAuthors.map(author => {
+                    const isChecked = filters.selectedAuthors.includes(author.id);
+                    return (
+                      <button
+                        key={author.id}
+                        onClick={() => toggleAuthor(author.id)}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '10px',
+                          background: 'none',
+                          border: 'none',
+                          color: isChecked ? 'var(--accent-blue)' : 'var(--text-secondary)',
+                          cursor: 'pointer',
+                          textAlign: 'left',
+                          fontSize: '13px',
+                          fontFamily: 'var(--font-sans)',
+                          padding: '6px',
+                          backgroundColor: isChecked ? 'rgba(2, 132, 199, 0.04)' : 'transparent',
+                          borderBottom: '1px solid rgba(104, 124, 110, 0.1)'
+                        }}
+                      >
+                        {isChecked ? <CheckSquare size={16} style={{ flexShrink: 0 }} /> : <Square size={16} style={{ flexShrink: 0 }} />}
+                        <div style={{
+                          width: '24px',
+                          height: '24px',
+                          backgroundColor: 'var(--border-color)',
+                          color: isChecked ? 'var(--accent-blue)' : 'var(--accent-teal)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          fontSize: '10px',
+                          fontWeight: 600,
+                          flexShrink: 0
+                        }}>
+                          {author.avatar}
+                        </div>
+                        <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                          <strong>{author.name}</strong>
+                          <div style={{ fontSize: '10px', color: 'var(--text-muted)', overflow: 'hidden', textOverflow: 'ellipsis' }}>{author.institution}</div>
+                        </div>
+                      </button>
+                    );
+                  })}
+                  {filteredAuthors.length === 0 && (
+                    <div style={{ gridColumn: '1 / -1', fontSize: '13px', color: 'var(--text-muted)', textAlign: 'center', padding: '24px 0' }}>
+                      Kiritilgan so'rov bo'yicha muallif topilmadi.
+                    </div>
+                  )}
+                </div>
               </div>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '12px' }}>
-                {allAuthors.map(author => {
-                  const isChecked = filters.selectedAuthors.includes(author.id);
-                  return (
-                    <button
-                      key={author.id}
-                      onClick={() => toggleAuthor(author.id)}
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '10px',
-                        background: 'none',
-                        border: 'none',
-                        color: isChecked ? 'var(--accent-blue)' : 'var(--text-secondary)',
-                        cursor: 'pointer',
-                        textAlign: 'left',
-                        fontSize: '13px',
-                        fontFamily: 'var(--font-sans)',
-                        padding: '6px',
-                        backgroundColor: isChecked ? 'rgba(56, 189, 248, 0.03)' : 'transparent',
-                        borderBottom: '1px solid rgba(104, 124, 110, 0.1)'
-                      }}
-                    >
-                      {isChecked ? <CheckSquare size={16} style={{ flexShrink: 0 }} /> : <Square size={16} style={{ flexShrink: 0 }} />}
-                      <div style={{
-                        width: '24px',
-                        height: '24px',
-                        backgroundColor: 'var(--border-color)',
-                        color: isChecked ? 'var(--accent-blue)' : 'var(--accent-teal)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        fontSize: '10px',
-                        fontWeight: 600,
-                        flexShrink: 0
-                      }}>
-                        {author.avatar}
-                      </div>
-                      <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                        <strong>{author.name}</strong>
-                        <div style={{ fontSize: '10px', color: 'var(--text-muted)', overflow: 'hidden', textOverflow: 'ellipsis' }}>{author.institution}</div>
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          )}
+            );
+          })()}
 
           {/* SARALASH */}
           {activeTab === 'sort' && (
