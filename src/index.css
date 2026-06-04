@@ -1,0 +1,263 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap');
+
+:root {
+  /* Ranglar palitrasi (Foydalanuvchi yuborgan rasmdagi sovuq, ko'zni og'ritmaydigan to'q yashil-kulrang tusda) */
+  --bg-main: #2b332c;          /* To'q yashil-kulrang asosiy fon (tim qora emas) */
+  --bg-panel: #202621;         /* Panel foni (bir oz to'qroq, kontrasti baland) */
+  --bg-panel-hover: #1c211d;   /* Hover qilingandagi fon */
+  --bg-input: #171c18;         /* Input maydonining foni */
+  
+  --border-color: #37433a;     /* Chegaralar uchun po'lat-yashil rang */
+  --border-color-hover: #4a5a4e; /* Hover chegarasi */
+  
+  --text-primary: #e3ece6;     /* Asosiy matn (sovuq oqish-yashil, ko'zga yumshoq) */
+  --text-secondary: #9cb0a1;   /* Ikkinchi darajali matn */
+  --text-muted: #687c6e;       /* Muted matn */
+  
+  --accent-blue: #38bdf8;      /* Sovuq havorang (primary aksent) */
+  --accent-teal: #2dd4bf;      /* Sovuq yashil-havorang (secondary aksent) */
+  --accent-blue-rgb: 56, 189, 248;
+  --accent-teal-rgb: 45, 212, 191;
+  
+  --shadow-color: #131714;     /* Tekis soyalar uchun to'q rang */
+  
+  /* Shriftlar */
+  --font-sans: 'Cinzel', serif;
+  --font-heading: 'Cinzel', serif;
+  
+  /* Burchaklar mutlaqo o'tkir bo'lishi uchun */
+  --radius-sharp: 0px;
+}
+
+/* Global Reset va Standartlar */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--bg-main);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
+}
+
+/* Tipografiya */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  font-weight: 500; /* Nozikroq va nafis stildagi sarlavhalar */
+  line-height: 1.25;
+  color: var(--text-primary);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+/* O'tkir qirrali panellar dizayn tizimi (Sharp-edged UI) */
+.sharp-panel {
+  background-color: var(--bg-panel);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sharp);
+  padding: 24px;
+  box-shadow: 4px 4px 0px 0px var(--shadow-color);
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), 
+              box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1), 
+              border-color 0.2s ease,
+              background-color 0.2s ease;
+}
+
+.sharp-panel:hover {
+  border-color: var(--border-color-hover);
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0px 0px var(--shadow-color);
+}
+
+/* Faol / bosiladigan panellar uchun */
+.sharp-panel.interactive {
+  cursor: pointer;
+}
+
+.sharp-panel.interactive:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0px 0px var(--shadow-color);
+}
+
+/* O'tkir qirrali tugmalar (Sharp buttons) */
+.sharp-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background-color: var(--bg-panel);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sharp);
+  padding: 10px 20px;
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  box-shadow: 3px 3px 0px 0px var(--shadow-color);
+  transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+  user-select: none;
+}
+
+.sharp-btn:hover {
+  border-color: var(--border-color-hover);
+  background-color: var(--bg-panel-hover);
+  transform: translate(-1px, -1px);
+  box-shadow: 4px 4px 0px 0px var(--shadow-color);
+}
+
+.sharp-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0px 0px var(--shadow-color);
+}
+
+.sharp-btn.primary {
+  background-color: rgba(56, 189, 248, 0.08);
+  border-color: var(--accent-blue);
+  color: var(--accent-blue);
+}
+
+.sharp-btn.primary:hover {
+  background-color: rgba(56, 189, 248, 0.15);
+  box-shadow: 4px 4px 0px 0px rgba(56, 189, 248, 0.2);
+}
+
+.sharp-btn.teal {
+  background-color: rgba(45, 212, 191, 0.08);
+  border-color: var(--accent-teal);
+  color: var(--accent-teal);
+}
+
+.sharp-btn.teal:hover {
+  background-color: rgba(45, 212, 191, 0.15);
+  box-shadow: 4px 4px 0px 0px rgba(45, 212, 191, 0.2);
+}
+
+/* O'tkir qirrali inputlar */
+.sharp-input {
+  background-color: var(--bg-input);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sharp);
+  padding: 12px 16px;
+  font-family: var(--font-sans);
+  font-size: 15px;
+  outline: none;
+  width: 100%;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.sharp-input::placeholder {
+  color: var(--text-muted);
+}
+
+.sharp-input:focus {
+  border-color: var(--accent-blue);
+  box-shadow: 0 0 0 1px var(--accent-blue);
+}
+
+/* Teglar va Kategoriyalar stili */
+.sharp-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 8px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sharp);
+  font-size: 12px;
+  font-weight: 500;
+  background-color: rgba(46, 59, 78, 0.25);
+  color: var(--text-secondary);
+}
+
+.sharp-tag.interactive {
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.sharp-tag.interactive:hover, .sharp-tag.active {
+  border-color: var(--accent-blue);
+  color: var(--accent-blue);
+  background-color: rgba(56, 189, 248, 0.05);
+}
+
+/* Mikro-animatsiyalar va Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-main);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: var(--radius-sharp);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--border-color-hover);
+}
+
+/* Grid va Layout yordamchi klasslari */
+.app-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* Modal oyna */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(9, 12, 18, 0.8);
+  backdrop-filter: blur(4px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 20px;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.modal-content {
+  background-color: var(--bg-panel);
+  border: 2px solid var(--border-color);
+  box-shadow: 8px 8px 0px 0px var(--shadow-color);
+  width: 100%;
+  max-width: 850px;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  animation: slideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
