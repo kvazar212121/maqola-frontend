@@ -2,24 +2,24 @@
 
 :root {
   /* Ranglar palitrasi (Foydalanuvchi yuborgan rasmdagi sovuq, ko'zni og'ritmaydigan to'q yashil-kulrang tusda) */
-  --bg-main: #2b332c;          /* To'q yashil-kulrang asosiy fon (tim qora emas) */
-  --bg-panel: #202621;         /* Panel foni (bir oz to'qroq, kontrasti baland) */
-  --bg-panel-hover: #1c211d;   /* Hover qilingandagi fon */
-  --bg-input: #171c18;         /* Input maydonining foni */
+  --bg-main: #364038;          /* Sal ochroq yashil-kulrang asosiy fon */
+  --bg-panel: #283029;         /* Panel foni (sal ochroq) */
+  --bg-panel-hover: #222923;   /* Hover qilingandagi fon */
+  --bg-input: #1e241f;         /* Input foni */
   
-  --border-color: #37433a;     /* Chegaralar uchun po'lat-yashil rang */
-  --border-color-hover: #4a5a4e; /* Hover chegarasi */
+  --border-color: #48564b;     /* Chegaralar uchun sal ochroq po'lat-yashil */
+  --border-color-hover: #5d6f61; /* Hover chegarasi */
   
-  --text-primary: #e3ece6;     /* Asosiy matn (sovuq oqish-yashil, ko'zga yumshoq) */
-  --text-secondary: #9cb0a1;   /* Ikkinchi darajali matn */
-  --text-muted: #687c6e;       /* Muted matn */
+  --text-primary: #edf4f0;     /* Asosiy matn (sovuq, ochroq yashil-oq) */
+  --text-secondary: #a7baa9;   /* Ikkinchi darajali matn */
+  --text-muted: #778b7b;       /* Muted matn */
   
   --accent-blue: #38bdf8;      /* Sovuq havorang (primary aksent) */
   --accent-teal: #2dd4bf;      /* Sovuq yashil-havorang (secondary aksent) */
   --accent-blue-rgb: 56, 189, 248;
   --accent-teal-rgb: 45, 212, 191;
   
-  --shadow-color: #131714;     /* Tekis soyalar uchun to'q rang */
+  --shadow-color: #1a1e1b;     /* Sal ochroq soya rang */
   
   /* Shriftlar */
   --font-sans: 'Cinzel', serif;
