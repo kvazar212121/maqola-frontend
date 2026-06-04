@@ -1,5 +1,5 @@
 import React from 'react';
-import { LogIn, User } from 'lucide-react';
+import { LogIn } from 'lucide-react';
 
 interface HeaderProps {}
 
@@ -66,32 +66,19 @@ export const Header: React.FC<HeaderProps> = () => {
           </a>
         </nav>
 
-        {/* Profil va Kirish / Ro'yxatdan o'tish */}
+        {/* Profil va Kirish */}
         <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
           <button 
-            className="sharp-btn"
+            className="sharp-btn primary"
             style={{ 
               fontSize: '13px', 
-              padding: '6px 14px', 
-              boxShadow: 'none',
+              padding: '6px 16px',
               display: 'inline-flex',
               alignItems: 'center',
               gap: '6px'
             }}
           >
             <LogIn size={13} /> Kirish
-          </button>
-          <button 
-            className="sharp-btn primary"
-            style={{ 
-              fontSize: '13px', 
-              padding: '6px 14px',
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '6px'
-            }}
-          >
-            <User size={13} /> Ro'yxatdan o'tish
           </button>
         </div>
       </div>
