@@ -19,7 +19,9 @@ export const Header: React.FC<HeaderProps> = () => {
         justifyContent: 'space-between',
         alignItems: 'center',
         height: '70px',
-        gap: '20px'
+        gap: '20px',
+        maxWidth: '1000px',
+        margin: '0 auto'
       }}>
         {/* Logotip */}
         <a href="/" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -34,16 +36,6 @@ export const Header: React.FC<HeaderProps> = () => {
           }}>
             METAMAQOLA.UZ
           </div>
-          <span style={{
-            fontFamily: 'var(--font-heading)',
-            fontWeight: 500,
-            fontSize: '14px',
-            color: 'var(--text-secondary)',
-            letterSpacing: '1px',
-            textTransform: 'uppercase'
-          }} className="portal-sub-title">
-            Tadqiqotlar Portali
-          </span>
         </a>
 
         {/* Navigatsiya Menulari */}

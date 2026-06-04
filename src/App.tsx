@@ -274,7 +274,9 @@ function App() {
           justifyContent: 'space-between',
           alignItems: 'center',
           flexWrap: 'wrap',
-          gap: '20px'
+          gap: '20px',
+          maxWidth: '1000px',
+          margin: '0 auto'
         }}>
           <div>
             <p style={{ fontWeight: 600, color: 'var(--text-primary)', marginBottom: '4px', fontFamily: 'var(--font-heading)' }}>
