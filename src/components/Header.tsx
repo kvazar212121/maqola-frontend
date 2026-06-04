@@ -37,7 +37,7 @@ export const Header: React.FC<HeaderProps> = () => {
             fontSize: '18px',
             letterSpacing: '0.5px'
           }}>
-            MAQOLA.UZ
+            METAMAQOLA.UZ
           </div>
           <span style={{
             fontFamily: 'var(--font-heading)',

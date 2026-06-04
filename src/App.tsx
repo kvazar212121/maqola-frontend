@@ -278,7 +278,7 @@ function App() {
         }}>
           <div>
             <p style={{ fontWeight: 600, color: 'var(--text-primary)', marginBottom: '4px', fontFamily: 'var(--font-heading)' }}>
-              MAQOLA.UZ © {new Date().getFullYear()}
+              METAMAQOLA.UZ © {new Date().getFullYear()}
             </p>
             <p style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
               Ushbu platforma ilmiy ishlar, maqolalar va ularning bibliografik ma'lumotlarini to'plash maqsadida yaratilgan.
