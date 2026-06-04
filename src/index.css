@@ -2,8 +2,8 @@
 
 :root {
   /* Ranglar palitrasi (Foydalanuvchi yuborgan rasmdagi sovuq, ko'zni og'ritmaydigan to'q yashil-kulrang tusda) */
-  --bg-main: #364038;          /* Sal ochroq yashil-kulrang asosiy fon */
-  --bg-panel: #283029;         /* Panel foni (sal ochroq) */
+  --bg-main: #49554b;          /* Sal ochroq yashil-kulrang asosiy fon */
+  --bg-panel: #2b3d2e;         /* Panel foni (sal ochroq) */
   --bg-panel-hover: #222923;   /* Hover qilingandagi fon */
   --bg-input: #1e241f;         /* Input foni */
   
@@ -14,7 +14,7 @@
   --text-secondary: #a7baa9;   /* Ikkinchi darajali matn */
   --text-muted: #778b7b;       /* Muted matn */
   
-  --accent-blue: #38bdf8;      /* Sovuq havorang (primary aksent) */
+  --accent-blue: #8fd6ec;      /* Sovuq havorang (primary aksent) */
   --accent-teal: #2dd4bf;      /* Sovuq yashil-havorang (secondary aksent) */
   --accent-blue-rgb: 56, 189, 248;
   --accent-teal-rgb: 45, 212, 191;
