@@ -17,7 +17,7 @@ export const Header: React.FC<HeaderProps> = () => {
       top: 0,
       zIndex: 100,
       backdropFilter: 'blur(8px)',
-      background: 'rgba(43, 51, 44, 0.9)'
+      background: 'var(--bg-header-rgba)'
     }}>
       <div className="app-container" style={{
         display: 'flex',

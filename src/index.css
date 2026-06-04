@@ -1,25 +1,26 @@
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap');
 
 :root {
-  /* Ranglar palitrasi (Foydalanuvchi yuborgan rasmdagi sovuq, ko'zni og'ritmaydigan to'q yashil-kulrang tusda) */
-  --bg-main: #49554b;          /* Sal ochroq yashil-kulrang asosiy fon */
-  --bg-panel: #2b3d2e;         /* Panel foni (sal ochroq) */
-  --bg-panel-hover: #222923;   /* Hover qilingandagi fon */
-  --bg-input: #1e241f;         /* Input foni */
+  /* Ranglar palitrasi - Oq / Ochiq dizayn */
+  --bg-main: #f5f7f6;          /* Ochiq kulrang-yashil fon (ko'zni og'ritmaydi) */
+  --bg-panel: #ffffff;         /* Panellar uchun toza oq rang */
+  --bg-panel-hover: #fafcfb;   /* Hover paneli */
+  --bg-input: #ffffff;         /* Input maydoni foni */
   
-  --border-color: #48564b;     /* Chegaralar uchun sal ochroq po'lat-yashil */
-  --border-color-hover: #5d6f61; /* Hover chegarasi */
+  --border-color: #cbd5ce;     /* Chegaralar uchun yumshoq kulrang-yashil */
+  --border-color-hover: #9bb0a2; /* Hover chegarasi */
   
-  --text-primary: #edf4f0;     /* Asosiy matn (sovuq, ochroq yashil-oq) */
-  --text-secondary: #a7baa9;   /* Ikkinchi darajali matn */
-  --text-muted: #778b7b;       /* Muted matn */
+  --text-primary: #1c2620;     /* To'q yashil-kulrang yozuvlar (tim qora emas, yumshoq va aniq) */
+  --text-secondary: #4a5c50;   /* Ikkinchi darajali matn */
+  --text-muted: #728578;       /* Muted matn */
   
-  --accent-blue: #8fd6ec;      /* Sovuq havorang (primary aksent) */
-  --accent-teal: #2dd4bf;      /* Sovuq yashil-havorang (secondary aksent) */
-  --accent-blue-rgb: 56, 189, 248;
-  --accent-teal-rgb: 45, 212, 191;
+  --accent-blue: #0284c7;      /* To'qroq havorang (primary aksent) */
+  --accent-teal: #0d9488;      /* To'qroq yashil-havorang (secondary aksent) */
+  --accent-blue-rgb: 2, 132, 199;
+  --accent-teal-rgb: 13, 148, 136;
   
-  --shadow-color: #1a1e1b;     /* Sal ochroq soya rang */
+  --shadow-color: #cbd5ce;     /* Soya uchun yumshoq chegara rangi */
+  --bg-header-rgba: rgba(255, 255, 255, 0.9); /* Header uchun shaffof oq fon */
   
   /* Shriftlar */
   --font-sans: 'Cinzel', serif;
@@ -224,7 +225,7 @@ a {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(9, 12, 18, 0.8);
+  background-color: rgba(28, 38, 32, 0.4);
   backdrop-filter: blur(4px);
   display: flex;
   justify-content: center;

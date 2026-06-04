@@ -7,7 +7,7 @@ export const Hero: React.FC<HeroProps> = () => {
     <section style={{
       padding: '56px 0 48px 0',
       borderBottom: '1px solid var(--border-color)',
-      backgroundColor: 'rgba(54, 64, 56, 0.25)',
+      backgroundColor: 'rgba(13, 148, 136, 0.04)',
       textAlign: 'center'
     }}>
       <div className="app-container" style={{
