@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,300;0,400;0,700;1,300;1,400&family=Outfit:wght@400;500;600;700;800&display=swap');
 
 :root {
   /* Ranglar palitrasi - Oq / Ochiq dizayn */
@@ -23,8 +23,9 @@
   --bg-header-rgba: rgba(255, 255, 255, 0.9); /* Header uchun shaffof oq fon */
   
   /* Shriftlar */
-  --font-sans: 'Cinzel', serif;
+  --font-sans: 'Inter', sans-serif;
   --font-heading: 'Cinzel', serif;
+  --font-article: 'Merriweather', Georgia, serif;
   
   /* Burchaklar mutlaqo o'tkir bo'lishi uchun */
   --radius-sharp: 0px;
@@ -261,4 +262,8 @@ a {
     transform: translateY(0);
     opacity: 1;
   }
+}
+
+.article-text {
+  font-family: var(--font-article) !important;
 }
