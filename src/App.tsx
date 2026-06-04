@@ -1,9 +1,9 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Header } from './components/Header';
 import { Hero } from './components/Hero';
 import { FilterPanel } from './components/FilterPanel';
 import { ArticleCard } from './components/ArticleCard';
-import { ArticleModal } from './components/ArticleModal';
+import { ArticlePage } from './components/ArticlePage';
 import { mockArticles, mockAuthors } from './mockData';
 import type { Article, FilterState } from './types';
 import { Info, Search } from 'lucide-react';
@@ -19,6 +19,32 @@ function App() {
 
   const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
   const [likedArticles, setLikedArticles] = useState<string[]>([]);
+
+  // Hash routing yordamida alohida sahifalarni boshqarish
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash;
+      if (hash.startsWith('#/article/')) {
+        const id = hash.replace('#/article/', '');
+        const article = mockArticles.find(art => art.id === id);
+        if (article) {
+          setSelectedArticle(article);
+          window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
+          return;
+        }
+      }
+      setSelectedArticle(null);
+    };
+
+    handleHashChange();
+
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
+
+  const handleCloseArticle = () => {
+    window.location.hash = '';
+  };
 
   // Barcha mavjud kalit so'zlarni (tags) yig'ish
   const allTags = useMemo(() => {
@@ -113,11 +139,20 @@ function App() {
       {/* Yuqori qism (Navbar) */}
       <Header />
 
-      {/* Hero */}
-      <Hero />
+      {selectedArticle ? (
+        <ArticlePage
+          article={selectedArticle}
+          onClose={handleCloseArticle}
+          onLike={handleLikeArticle}
+          hasLiked={likedArticles.includes(selectedArticle.id)}
+        />
+      ) : (
+        <>
+          {/* Hero */}
+          <Hero />
 
-      {/* Asosiy Kontent Bo'limi */}
-      <main id="articles-section" style={{ padding: '48px 0', flexGrow: 1 }}>
+          {/* Asosiy Kontent Bo'limi */}
+          <main id="articles-section" style={{ padding: '48px 0', flexGrow: 1 }}>
         <div className="app-container">
           <div style={{
             maxWidth: '1000px',
@@ -193,7 +228,9 @@ function App() {
                   <ArticleCard
                     key={article.id}
                     article={article}
-                    onSelect={() => setSelectedArticle(article)}
+                    onSelect={() => {
+                      window.location.hash = `#/article/${article.id}`;
+                    }}
                   />
                 ))}
               </div>
@@ -221,6 +258,8 @@ function App() {
           </div>
         </div>
       </main>
+        </>
+      )}
 
       {/* Footer */}
       <footer style={{
@@ -253,15 +292,7 @@ function App() {
         </div>
       </footer>
 
-      {/* Batafsil o'qish modali */}
-      {selectedArticle && (
-        <ArticleModal
-          article={selectedArticle}
-          onClose={() => setSelectedArticle(null)}
-          onLike={handleLikeArticle}
-          hasLiked={likedArticles.includes(selectedArticle.id)}
-        />
-      )}
+
     </div>
   );
 }
