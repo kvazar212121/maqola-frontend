@@ -23,6 +23,7 @@ function App() {
   const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
   const [likedArticles, setLikedArticles] = useState<string[]>([]);
   const [isAdvancedSearchOpen, setIsAdvancedSearchOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
 
   // Hash routing yordamida alohida sahifalarni boshqarish
   useEffect(() => {
@@ -134,10 +135,12 @@ function App() {
 
   const handleFilterChange = (newFilters: Partial<FilterState>) => {
     setFilters(prev => ({ ...prev, ...newFilters }));
+    setCurrentPage(1);
   };
 
   const handleSearchChange = (query: string) => {
     setFilters(prev => ({ ...prev, searchQuery: query }));
+    setCurrentPage(1);
   };
 
 
@@ -153,9 +156,16 @@ function App() {
   };
 
   const isHome = currentPath === 'home';
-  const displayedArticles = isHome 
-    ? [...mockArticles].sort((a, b) => b.views - a.views).slice(0, 6) 
-    : filteredAndSortedArticles;
+  const ARTICLES_PER_PAGE = 20;
+  const totalPages = Math.ceil(filteredAndSortedArticles.length / ARTICLES_PER_PAGE);
+
+  const displayedArticles = useMemo(() => {
+    if (isHome) {
+      return [...mockArticles].sort((a, b) => b.views - a.views).slice(0, 6);
+    }
+    const startIndex = (currentPage - 1) * ARTICLES_PER_PAGE;
+    return filteredAndSortedArticles.slice(startIndex, startIndex + ARTICLES_PER_PAGE);
+  }, [isHome, filteredAndSortedArticles, currentPage]);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', backgroundColor: 'var(--bg-main)' }}>
@@ -262,17 +272,69 @@ function App() {
                         {!isHome && filters.selectedTags.length > 0 && ` (${filters.selectedTags.map(t => `#${t}`).join(', ')})`}
                       </h3>
                       <span style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>
-                        {isHome ? 'TOP 6' : `Jami: ${displayedArticles.length} ta maqola`}
+                        {isHome ? 'TOP 6' : `Jami: ${filteredAndSortedArticles.length} ta maqola`}
                       </span>
                     </div>
 
                     {/* Maqolalar Ro'yxati */}
                     {displayedArticles.length > 0 ? (
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }} className="articles-list">
-                        {displayedArticles.map(article => (
-                          <ArticleCard key={article.id} article={article} onSelect={() => { window.location.hash = `#/article/${article.id}`; }} />
-                        ))}
-                      </div>
+                      <>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }} className="articles-list">
+                          {displayedArticles.map(article => (
+                            <ArticleCard key={article.id} article={article} onSelect={() => { window.location.hash = `#/article/${article.id}`; }} />
+                          ))}
+                        </div>
+                        
+                        {/* Pagination Controls */}
+                        {!isHome && totalPages > 1 && (
+                          <div style={{ display: 'flex', justifyContent: 'center', gap: '8px', marginTop: '40px' }}>
+                            <button
+                              onClick={() => {
+                                setCurrentPage(p => Math.max(1, p - 1));
+                                window.scrollTo({ top: 0, behavior: 'smooth' });
+                              }}
+                              disabled={currentPage === 1}
+                              className="sharp-btn"
+                              style={{ padding: '8px 12px', opacity: currentPage === 1 ? 0.5 : 1 }}
+                            >
+                              Oldingi
+                            </button>
+                            {Array.from({ length: totalPages }).map((_, i) => {
+                              const pageNum = i + 1;
+                              if (pageNum === 1 || pageNum === totalPages || (pageNum >= currentPage - 2 && pageNum <= currentPage + 2)) {
+                                return (
+                                  <button
+                                    key={pageNum}
+                                    onClick={() => {
+                                      setCurrentPage(pageNum);
+                                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                                    }}
+                                    className={currentPage === pageNum ? "sharp-btn primary" : "sharp-btn"}
+                                    style={{ padding: '8px 16px' }}
+                                  >
+                                    {pageNum}
+                                  </button>
+                                );
+                              }
+                              if (pageNum === currentPage - 3 || pageNum === currentPage + 3) {
+                                return <span key={`dots-${pageNum}`} style={{ display: 'flex', alignItems: 'center', padding: '0 8px' }}>...</span>;
+                              }
+                              return null;
+                            })}
+                            <button
+                              onClick={() => {
+                                setCurrentPage(p => Math.min(totalPages, p + 1));
+                                window.scrollTo({ top: 0, behavior: 'smooth' });
+                              }}
+                              disabled={currentPage === totalPages}
+                              className="sharp-btn"
+                              style={{ padding: '8px 12px', opacity: currentPage === totalPages ? 0.5 : 1 }}
+                            >
+                              Keyingisi
+                            </button>
+                          </div>
+                        )}
+                      </>
                     ) : (
                       <div className="sharp-panel" style={{ textAlign: 'center', padding: '64px 20px', backgroundColor: 'var(--bg-panel)', borderStyle: 'dashed', borderRadius: '8px' }}>
                         <Info size={32} color="var(--accent-blue)" style={{ marginBottom: '16px', opacity: 0.8 }} />
