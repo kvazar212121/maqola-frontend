@@ -36,6 +36,13 @@ function App() {
           setSelectedArticle(article);
           setCurrentPath('article');
           window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
+
+          // Backendga maqola o'qilganligi haqida xabar yuborish (ko'rishlar sonini oshirish uchun)
+          // Bu orqali backend eng ko'p o'qilgan maqolalarni hisoblaydi
+          fetch(`/api/articles/${id}/view`, { method: 'POST' }).catch(err => {
+            console.warn("Backend view tracking failed:", err);
+          });
+
           return;
         }
       } else if (hash === '#/articles') {
