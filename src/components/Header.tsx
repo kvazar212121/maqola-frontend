@@ -1,7 +1,11 @@
 import React from 'react';
 import { LogIn } from 'lucide-react';
 
-export const Header: React.FC = () => {
+interface HeaderProps {
+  currentPath: string;
+}
+
+export const Header: React.FC<HeaderProps> = ({ currentPath }) => {
   return (
     <header style={{
       backgroundColor: 'var(--accent-blue)', // Zenodo ko'k rangi
@@ -49,9 +53,9 @@ export const Header: React.FC = () => {
           fontFamily: 'var(--font-sans)',
           fontWeight: 500
         }}>
-          <a href="#" style={{ color: 'white' }}>Bosh Sahifa</a>
-          <a href="#articles-section" style={{ color: 'rgba(255,255,255,0.8)' }}>Maqolalar</a>
-          <a href="#about" style={{ color: 'rgba(255,255,255,0.8)' }}>Loyiha haqida</a>
+          <a href="#/" style={{ color: currentPath === 'home' ? 'white' : 'rgba(255,255,255,0.8)' }}>Bosh Sahifa</a>
+          <a href="#/articles" style={{ color: currentPath === 'articles' ? 'white' : 'rgba(255,255,255,0.8)' }}>Maqolalar</a>
+          <a href="#/about" style={{ color: currentPath === 'about' ? 'white' : 'rgba(255,255,255,0.8)' }}>Loyiha haqida</a>
         </nav>
 
         {/* Kirish va Ro'yxatdan o'tish tugmalari (Zenodo Style) */}

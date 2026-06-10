@@ -5,6 +5,7 @@ import { FilterPanel } from './components/FilterPanel';
 import { ArticleCard } from './components/ArticleCard';
 import { ArticlePage } from './components/ArticlePage';
 import { AdvancedSearchPanel } from './components/AdvancedSearchPanel';
+import { AboutPage } from './components/AboutPage';
 import { mockArticles } from './mockData';
 import type { Article, FilterState } from './types';
 import { Info, Search, SlidersHorizontal } from 'lucide-react';
@@ -18,6 +19,7 @@ function App() {
     sortBy: 'date'
   });
 
+  const [currentPath, setCurrentPath] = useState<string>('home');
   const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
   const [likedArticles, setLikedArticles] = useState<string[]>([]);
   const [isAdvancedSearchOpen, setIsAdvancedSearchOpen] = useState(false);
@@ -31,9 +33,16 @@ function App() {
         const article = mockArticles.find(art => art.id === id);
         if (article) {
           setSelectedArticle(article);
+          setCurrentPath('article');
           window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
           return;
         }
+      } else if (hash === '#/articles') {
+        setCurrentPath('articles');
+      } else if (hash === '#/about') {
+        setCurrentPath('about');
+      } else {
+        setCurrentPath('home');
       }
       setSelectedArticle(null);
     };
@@ -143,126 +152,146 @@ function App() {
     });
   };
 
+  const isHome = currentPath === 'home';
+  const displayedArticles = isHome 
+    ? [...mockArticles].sort((a, b) => b.views - a.views).slice(0, 6) 
+    : filteredAndSortedArticles;
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', backgroundColor: 'var(--bg-main)' }}>
       {/* Yuqori qism (Navbar) */}
-      <Header />
+      <Header currentPath={currentPath} />
 
-      {selectedArticle ? (
+      {currentPath === 'article' && selectedArticle ? (
         <ArticlePage
           article={selectedArticle}
           onClose={handleCloseArticle}
           onLike={handleLikeArticle}
           hasLiked={likedArticles.includes(selectedArticle.id)}
         />
+      ) : currentPath === 'about' ? (
+        <AboutPage />
       ) : (
         <>
-          {/* Hero */}
-          <Hero />
+          {/* Hero faqat bosh sahifada */}
+          {isHome && <Hero />}
 
           {/* Asosiy Kontent Bo'limi */}
           <main id="articles-section" style={{ padding: '48px 0', flexGrow: 1 }}>
-        <div className="app-container">
-          <div style={{
-            maxWidth: '1400px',
-            margin: '0 auto',
-            backgroundColor: 'rgba(255, 255, 255, 0.6)', /* Bilinar-bilinmas oqish fon */
-            padding: '32px',
-            borderRadius: '8px',
-            border: '1px solid rgba(0, 0, 0, 0.03)'
-          }}>
-            
-            <div style={{ display: 'flex', gap: '40px', alignItems: 'flex-start' }}>
-              
-              {/* Chap qism: Qidiruv va Maqolalar */}
-              <div style={{ flex: 1, minWidth: 0 }}>
-                {/* Qidiruv paneli va Kengaytirilgan Qidiruv */}
-                <div style={{ display: 'flex', gap: '16px', marginBottom: '32px' }}>
-                  <div style={{ position: 'relative', flex: 1 }}>
-                    <div style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }}>
-                      <Search size={18} />
-                    </div>
-                    <input 
-                      type="text" 
-                      className="sharp-input" 
-                      placeholder="Mavzular, kalit so'zlar yoki DOI bo'yicha qidirish..." 
-                      value={filters.searchQuery} 
-                      onChange={(e) => handleSearchChange(e.target.value)} 
-                      style={{ 
-                        paddingLeft: '48px', 
-                        fontSize: '15px', 
-                        boxShadow: '0 2px 8px rgba(0,0,0,0.05)', 
-                        border: '1px solid var(--border-color)',
-                        height: '52px',
-                        borderRadius: '6px'
-                      }} 
-                    />
-                  </div>
+            <div className="app-container">
+              <div style={{
+                maxWidth: '1400px',
+                margin: '0 auto',
+                backgroundColor: 'rgba(255, 255, 255, 0.6)', /* Bilinar-bilinmas oqish fon */
+                padding: '32px',
+                borderRadius: '8px',
+                border: '1px solid rgba(0, 0, 0, 0.03)'
+              }}>
+                
+                <div style={{ display: 'flex', gap: '40px', alignItems: 'flex-start' }}>
                   
-                  <button
-                    onClick={() => setIsAdvancedSearchOpen(!isAdvancedSearchOpen)}
-                    className="sharp-btn"
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '8px',
-                      padding: '0 24px',
-                      height: '52px',
-                      backgroundColor: 'white',
-                      border: '1px solid var(--border-color)',
-                      borderRadius: '6px',
-                      boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
-                      fontSize: '14px',
-                      fontWeight: 500,
-                      color: 'var(--text-primary)',
-                      cursor: 'pointer'
-                    }}
-                  >
-                    <SlidersHorizontal size={18} color="var(--accent-blue)" />
-                    Kengaytirilgan qidiruv
-                  </button>
-                </div>
+                  {/* Chap qism: Qidiruv va Maqolalar */}
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    {/* Qidiruv paneli va Kengaytirilgan Qidiruv */}
+                    <div style={{ display: 'flex', gap: '16px', marginBottom: '32px' }}>
+                      <div style={{ position: 'relative', flex: 1 }}>
+                        <div style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }}>
+                          <Search size={18} />
+                        </div>
+                        <input 
+                          type="text" 
+                          className="sharp-input" 
+                          placeholder="Mavzular, kalit so'zlar yoki DOI bo'yicha qidirish..." 
+                          value={filters.searchQuery} 
+                          onChange={(e) => {
+                            handleSearchChange(e.target.value);
+                            if (isHome && e.target.value) {
+                              window.location.hash = '#/articles';
+                            }
+                          }} 
+                          style={{ 
+                            paddingLeft: '48px', 
+                            fontSize: '15px', 
+                            boxShadow: '0 2px 8px rgba(0,0,0,0.05)', 
+                            border: '1px solid var(--border-color)',
+                            height: '52px',
+                            borderRadius: '6px'
+                          }} 
+                        />
+                      </div>
+                      
+                      <button
+                        onClick={() => {
+                          setIsAdvancedSearchOpen(!isAdvancedSearchOpen);
+                          if (isHome) {
+                            window.location.hash = '#/articles';
+                          }
+                        }}
+                        className="sharp-btn"
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '8px',
+                          padding: '0 24px',
+                          height: '52px',
+                          backgroundColor: 'white',
+                          border: '1px solid var(--border-color)',
+                          borderRadius: '6px',
+                          boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
+                          fontSize: '14px',
+                          fontWeight: 500,
+                          color: 'var(--text-primary)',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        <SlidersHorizontal size={18} color="var(--accent-blue)" />
+                        Kengaytirilgan qidiruv
+                      </button>
+                    </div>
 
-                <AdvancedSearchPanel
-                  isOpen={isAdvancedSearchOpen}
-                  filters={filters}
-                  onFilterChange={handleFilterChange}
-                />
+                    <AdvancedSearchPanel
+                      isOpen={isAdvancedSearchOpen}
+                      filters={filters}
+                      onFilterChange={handleFilterChange}
+                    />
 
+                    {/* Maqolalar Header */}
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', borderBottom: '1px solid var(--border-color)', paddingBottom: '12px' }}>
+                      <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '20px', fontWeight: 600, color: 'var(--text-primary)' }}>
+                        {isHome ? 'Eng ko\'p o\'qilgan maqolalar' : (filters.categories.length > 0 ? `Tanlangan toifalar: ${filters.categories.join(', ')}` : 'Barcha maqolalar')}
+                        {!isHome && filters.selectedTags.length > 0 && ` (${filters.selectedTags.map(t => `#${t}`).join(', ')})`}
+                      </h3>
+                      <span style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>
+                        {isHome ? 'TOP 6' : `Jami: ${displayedArticles.length} ta maqola`}
+                      </span>
+                    </div>
 
-                {/* Maqolalar Header */}
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', borderBottom: '1px solid var(--border-color)', paddingBottom: '12px' }}>
-                  <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '20px', fontWeight: 600, color: 'var(--text-primary)' }}>
-                    {filters.categories.length > 0 ? `Tanlangan toifalar: ${filters.categories.join(', ')}` : 'Barcha maqolalar'}
-                    {filters.selectedTags.length > 0 && ` (${filters.selectedTags.map(t => `#${t}`).join(', ')})`}
-                  </h3>
-                  <span style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>Jami: <strong>{filteredAndSortedArticles.length}</strong> ta maqola</span>
-                </div>
-
-                {/* Maqolalar Ro'yxati */}
-                {filteredAndSortedArticles.length > 0 ? (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }} className="articles-list">
-                    {filteredAndSortedArticles.map(article => (
-                      <ArticleCard key={article.id} article={article} onSelect={() => { window.location.hash = `#/article/${article.id}`; }} />
-                    ))}
+                    {/* Maqolalar Ro'yxati */}
+                    {displayedArticles.length > 0 ? (
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }} className="articles-list">
+                        {displayedArticles.map(article => (
+                          <ArticleCard key={article.id} article={article} onSelect={() => { window.location.hash = `#/article/${article.id}`; }} />
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="sharp-panel" style={{ textAlign: 'center', padding: '64px 20px', backgroundColor: 'var(--bg-panel)', borderStyle: 'dashed', borderRadius: '8px' }}>
+                        <Info size={32} color="var(--accent-blue)" style={{ marginBottom: '16px', opacity: 0.8 }} />
+                        <h4 style={{ fontSize: '18px', fontWeight: 500, marginBottom: '8px', color: 'var(--text-primary)' }}>Maqola topilmadi</h4>
+                        <p style={{ color: 'var(--text-secondary)', fontSize: '14px', maxWidth: '380px', margin: '0 auto' }}>Belgilangan qidiruv parametrlari va filtrlarga mos keladigan maqola topilmadi.</p>
+                      </div>
+                    )}
                   </div>
-                ) : (
-                  <div className="sharp-panel" style={{ textAlign: 'center', padding: '64px 20px', backgroundColor: 'var(--bg-panel)', borderStyle: 'dashed', borderRadius: '8px' }}>
-                    <Info size={32} color="var(--accent-blue)" style={{ marginBottom: '16px', opacity: 0.8 }} />
-                    <h4 style={{ fontSize: '18px', fontWeight: 500, marginBottom: '8px', color: 'var(--text-primary)' }}>Maqola topilmadi</h4>
-                    <p style={{ color: 'var(--text-secondary)', fontSize: '14px', maxWidth: '380px', margin: '0 auto' }}>Belgilangan qidiruv parametrlari va filtrlarga mos keladigan maqola topilmadi.</p>
-                  </div>
-                )}
+
+                  {/* O'ng qism: Vertikal Sidebar Filtr (Faqat Maqolalar sahifasida chiqadi) */}
+                  {!isHome && (
+                    <aside style={{ width: '320px', flexShrink: 0, position: 'sticky', top: '24px' }}>
+                      <FilterPanel filters={filters} onFilterChange={handleFilterChange} allTags={allTags} />
+                    </aside>
+                  )}
+                </div>
               </div>
-
-              {/* O'ng qism: Vertikal Sidebar Filtr */}
-              <aside style={{ width: '320px', flexShrink: 0, position: 'sticky', top: '24px' }}>
-                <FilterPanel filters={filters} onFilterChange={handleFilterChange} allTags={allTags} />
-              </aside>
             </div>
-          </div>
-        </div>
-      </main>
+          </main>
         </>
       )}
 
