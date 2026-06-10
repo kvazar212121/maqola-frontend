@@ -297,33 +297,68 @@ function App() {
 
       {/* Footer */}
       <footer style={{
-        borderTop: '1px solid var(--border-color)',
-        padding: '32px 0',
-        backgroundColor: 'var(--bg-panel)',
-        fontSize: '13px',
-        color: 'var(--text-secondary)'
+        backgroundColor: 'var(--accent-blue)',
+        color: 'white',
+        padding: '48px 0 24px 0',
+        fontSize: '14px',
+        borderTop: 'none'
       }}>
         <div className="app-container" style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          flexWrap: 'wrap',
-          gap: '20px',
           maxWidth: '1400px',
-          margin: '0 auto'
+          margin: '0 auto',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '32px'
         }}>
-          <div>
-            <p style={{ fontWeight: 600, color: 'var(--text-primary)', marginBottom: '4px', fontFamily: 'var(--font-heading)' }}>
-              METAMAQOLA.UZ © {new Date().getFullYear()}
-            </p>
-            <p style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
-              Ushbu platforma ilmiy ishlar, maqolalar va ularning bibliografik ma'lumotlarini to'plash maqsadida yaratilgan.
-            </p>
+          
+          <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: '32px' }}>
+            <div style={{ flex: '1 1 300px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '2px', marginBottom: '16px' }}>
+                <span style={{ fontFamily: 'var(--font-heading)', fontWeight: 800, fontSize: '22px', color: 'white', letterSpacing: '1px' }}>
+                  META
+                </span>
+                <span style={{ fontFamily: 'var(--font-heading)', fontWeight: 400, fontSize: '22px', color: 'rgba(255, 255, 255, 0.8)' }}>
+                  MAQOLA
+                </span>
+              </div>
+              <p style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '13px', lineHeight: '1.6', maxWidth: '350px' }}>
+                O'zbekiston va xalqaro miqyosdagi ilmiy maqolalar, nashrlar hamda ularning bibliografik ma'lumotlarini o'zida jamlagan yagona ochiq platforma.
+              </p>
+            </div>
+            
+            <div style={{ flex: '1 1 300px' }}>
+              <h4 style={{ fontFamily: 'var(--font-heading)', fontSize: '16px', fontWeight: 600, marginBottom: '16px', color: 'white' }}>Hamkorlarimiz</h4>
+              <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '10px', color: 'rgba(255, 255, 255, 0.8)', fontSize: '13px' }}>
+                <li>Oliy ta'lim, fan va innovatsiyalar vazirligi</li>
+                <li>O'zbekiston Milliy Universiteti</li>
+                <li>Toshkent Axborot Texnologiyalari Universiteti</li>
+                <li>Toshkent Davlat Texnika Universiteti</li>
+              </ul>
+            </div>
+
+            <div style={{ flex: '1 1 200px' }}>
+              <h4 style={{ fontFamily: 'var(--font-heading)', fontSize: '16px', fontWeight: 600, marginBottom: '16px', color: 'white' }}>Foydali havolalar</h4>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '13px' }}>
+                <a href="#about" style={{ color: 'rgba(255,255,255,0.8)', textDecoration: 'none' }}>Loyiha haqida</a>
+                <a href="#terms" style={{ color: 'rgba(255,255,255,0.8)', textDecoration: 'none' }}>Foydalanish shartlari</a>
+                <a href="#contacts" style={{ color: 'rgba(255,255,255,0.8)', textDecoration: 'none' }}>Aloqa</a>
+                <a href="#faq" style={{ color: 'rgba(255,255,255,0.8)', textDecoration: 'none' }}>Ko'p beriladigan savollar</a>
+              </div>
+            </div>
           </div>
-          <div style={{ display: 'flex', gap: '20px' }}>
-            <a href="#about" className="hover-underline">Loyiha haqida</a>
-            <a href="#terms" className="hover-underline">Foydalanish shartlari</a>
-            <a href="#contacts" className="hover-underline">Aloqa</a>
+
+          <div style={{ 
+            borderTop: '1px solid rgba(255, 255, 255, 0.1)', 
+            paddingTop: '24px',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            flexWrap: 'wrap',
+            gap: '16px'
+          }}>
+            <p style={{ fontSize: '13px', color: 'rgba(255, 255, 255, 0.6)' }}>
+              METAMAQOLA.UZ © {new Date().getFullYear()}. Barcha huquqlar himoyalangan.
+            </p>
           </div>
         </div>
       </footer>
