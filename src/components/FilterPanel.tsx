@@ -1,19 +1,17 @@
 import React from 'react';
-import { Filter, Users, Tag } from 'lucide-react';
-import type { FilterState, Author } from '../types';
+import { Filter, Tag } from 'lucide-react';
+import type { FilterState } from '../types';
 
 interface FilterPanelProps {
   filters: FilterState;
   onFilterChange: (newFilters: Partial<FilterState>) => void;
   allTags: string[];
-  allAuthors: Author[];
 }
 
 export const FilterPanel: React.FC<FilterPanelProps> = ({
   filters,
   onFilterChange,
-  allTags,
-  allAuthors
+  allTags
 }) => {
 
   const categories = [
@@ -49,13 +47,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({
     onFilterChange({ selectedTags: newTags });
   };
 
-  const toggleAuthor = (authorId: string) => {
-    const isSelected = filters.selectedAuthors.includes(authorId);
-    const newAuthors = isSelected
-      ? filters.selectedAuthors.filter(id => id !== authorId)
-      : [...filters.selectedAuthors, authorId];
-    onFilterChange({ selectedAuthors: newAuthors });
-  };
+
 
   return (
     <div style={{

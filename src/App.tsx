@@ -5,7 +5,7 @@ import { FilterPanel } from './components/FilterPanel';
 import { ArticleCard } from './components/ArticleCard';
 import { ArticlePage } from './components/ArticlePage';
 import { AdvancedSearchPanel } from './components/AdvancedSearchPanel';
-import { mockArticles, mockAuthors } from './mockData';
+import { mockArticles } from './mockData';
 import type { Article, FilterState } from './types';
 import { Info, Search, SlidersHorizontal } from 'lucide-react';
 
@@ -53,11 +53,6 @@ function App() {
     const tagsSet = new Set<string>();
     mockArticles.forEach(art => art.tags.forEach(tag => tagsSet.add(tag)));
     return Array.from(tagsSet);
-  }, []);
-
-  // Barcha tadqiqotchilar ro'yxati
-  const allAuthors = useMemo(() => {
-    return Object.values(mockAuthors);
   }, []);
 
   // Filtrlangan va saralangan maqolalar
@@ -136,21 +131,7 @@ function App() {
     setFilters(prev => ({ ...prev, searchQuery: query }));
   };
 
-  const clearAllFilters = () => {
-    setFilters({
-      searchQuery: '',
-      categories: [],
-      selectedTags: [],
-      selectedAuthors: [],
-      sortBy: 'date',
-      advTitle: '',
-      advAuthor: '',
-      advAbstract: '',
-      advKeywords: '',
-      advPublisher: '',
-      advDoi: ''
-    });
-  };
+
 
   const handleLikeArticle = (articleId: string) => {
     setLikedArticles(prev => {
@@ -276,7 +257,7 @@ function App() {
 
               {/* O'ng qism: Vertikal Sidebar Filtr */}
               <aside style={{ width: '320px', flexShrink: 0, position: 'sticky', top: '24px' }}>
-                <FilterPanel filters={filters} onFilterChange={handleFilterChange} allTags={allTags} allAuthors={allAuthors} />
+                <FilterPanel filters={filters} onFilterChange={handleFilterChange} allTags={allTags} />
               </aside>
             </div>
           </div>
