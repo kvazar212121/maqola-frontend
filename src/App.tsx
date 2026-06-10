@@ -4,9 +4,10 @@ import { Hero } from './components/Hero';
 import { FilterPanel } from './components/FilterPanel';
 import { ArticleCard } from './components/ArticleCard';
 import { ArticlePage } from './components/ArticlePage';
+import { AdvancedSearchPanel } from './components/AdvancedSearchPanel';
 import { mockArticles, mockAuthors } from './mockData';
 import type { Article, FilterState } from './types';
-import { Info, Search } from 'lucide-react';
+import { Info, Search, SlidersHorizontal } from 'lucide-react';
 
 function App() {
   const [filters, setFilters] = useState<FilterState>({
@@ -19,6 +20,7 @@ function App() {
 
   const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
   const [likedArticles, setLikedArticles] = useState<string[]>([]);
+  const [isAdvancedSearchOpen, setIsAdvancedSearchOpen] = useState(false);
 
   // Hash routing yordamida alohida sahifalarni boshqarish
   useEffect(() => {
@@ -91,6 +93,26 @@ function App() {
       result = result.filter(art => filters.selectedAuthors.includes(art.author.id));
     }
 
+    // Kengaytirilgan qidiruv filtrlari
+    if (filters.advTitle?.trim()) {
+      result = result.filter(art => art.title.toLowerCase().includes(filters.advTitle!.toLowerCase()));
+    }
+    if (filters.advAuthor?.trim()) {
+      result = result.filter(art => art.author.name.toLowerCase().includes(filters.advAuthor!.toLowerCase()));
+    }
+    if (filters.advKeywords?.trim()) {
+      result = result.filter(art => art.tags.some(tag => tag.toLowerCase().includes(filters.advKeywords!.toLowerCase())));
+    }
+    if (filters.advPublisher?.trim()) {
+      result = result.filter(art => art.publisher?.toLowerCase().includes(filters.advPublisher!.toLowerCase()));
+    }
+    if (filters.advDoi?.trim()) {
+      result = result.filter(art => art.doi?.toLowerCase().includes(filters.advDoi!.toLowerCase()));
+    }
+    if (filters.advAbstract?.trim()) {
+      result = result.filter(art => art.summary.toLowerCase().includes(filters.advAbstract!.toLowerCase()) || art.content.toLowerCase().includes(filters.advAbstract!.toLowerCase()));
+    }
+
     // Saralash
     result.sort((a, b) => {
       if (filters.sortBy === 'views') {
@@ -120,7 +142,13 @@ function App() {
       categories: [],
       selectedTags: [],
       selectedAuthors: [],
-      sortBy: 'date'
+      sortBy: 'date',
+      advTitle: '',
+      advAuthor: '',
+      advAbstract: '',
+      advKeywords: '',
+      advPublisher: '',
+      advDoi: ''
     });
   };
 
@@ -155,106 +183,102 @@ function App() {
           <main id="articles-section" style={{ padding: '48px 0', flexGrow: 1 }}>
         <div className="app-container">
           <div style={{
-            maxWidth: '1000px',
-            margin: '0 auto'
+            maxWidth: '1400px',
+            margin: '0 auto',
+            backgroundColor: 'rgba(255, 255, 255, 0.6)', /* Bilinar-bilinmas oqish fon */
+            padding: '32px',
+            borderRadius: '8px',
+            border: '1px solid rgba(0, 0, 0, 0.03)'
           }}>
             
-            {/* Gorizontal Filtrlar paneli (Qidiruv maydonining tepasida) */}
-            <FilterPanel
-              filters={filters}
-              onFilterChange={handleFilterChange}
-              allTags={allTags}
-              allAuthors={allAuthors}
-            />
-
-            {/* Qidiruv paneli (Mavzular/DOI/Mualliflar uchun) */}
-            <div style={{ position: 'relative', width: '100%', marginBottom: '32px' }}>
-              <div style={{
-                position: 'absolute',
-                left: '16px',
-                top: '50%',
-                transform: 'translateY(-50%)',
-                color: 'var(--text-muted)'
-              }}>
-                <Search size={18} />
-              </div>
-              <input
-                type="text"
-                className="sharp-input"
-                placeholder="Mavzular, mualliflar, kalit so'zlar yoki DOI bo'yicha qidirish..."
-                value={filters.searchQuery}
-                onChange={(e) => handleSearchChange(e.target.value)}
-                style={{
-                  paddingLeft: '48px',
-                  fontSize: '15px',
-                  boxShadow: '4px 4px 0px 0px var(--shadow-color)',
-                  height: '48px'
-                }}
-              />
-            </div>
-
-            {/* Maqolalar Ro'yxati Header qismi */}
-            <div style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              marginBottom: '24px',
-              borderBottom: '1px solid var(--border-color)',
-              paddingBottom: '12px'
-            }}>
-              <h3 style={{
-                fontFamily: 'var(--font-heading)',
-                fontSize: '20px',
-                fontWeight: 400
-              }}>
-                {filters.categories.length > 0 
-                  ? `Tanlangan toifalar: ${filters.categories.join(', ')}` 
-                  : 'Barcha maqolalar'}
-                {filters.selectedTags.length > 0 && ` (${filters.selectedTags.map(t => `#${t}`).join(', ')})`}
-              </h3>
-              <span style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>
-                Jami: <strong>{filteredAndSortedArticles.length}</strong> ta maqola topildi
-              </span>
-            </div>
-
-            {/* Maqolalar Grid tarmog'i */}
-            {filteredAndSortedArticles.length > 0 ? (
-              <div style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fill, minmax(310px, 1fr))',
-                gap: '24px'
-              }} className="articles-grid">
-                {filteredAndSortedArticles.map(article => (
-                  <ArticleCard
-                    key={article.id}
-                    article={article}
-                    onSelect={() => {
-                      window.location.hash = `#/article/${article.id}`;
+            <div style={{ display: 'flex', gap: '40px', alignItems: 'flex-start' }}>
+              
+              {/* Chap qism: Qidiruv va Maqolalar */}
+              <div style={{ flex: 1, minWidth: 0 }}>
+                {/* Qidiruv paneli va Kengaytirilgan Qidiruv */}
+                <div style={{ display: 'flex', gap: '16px', marginBottom: '32px' }}>
+                  <div style={{ position: 'relative', flex: 1 }}>
+                    <div style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }}>
+                      <Search size={18} />
+                    </div>
+                    <input 
+                      type="text" 
+                      className="sharp-input" 
+                      placeholder="Mavzular, kalit so'zlar yoki DOI bo'yicha qidirish..." 
+                      value={filters.searchQuery} 
+                      onChange={(e) => handleSearchChange(e.target.value)} 
+                      style={{ 
+                        paddingLeft: '48px', 
+                        fontSize: '15px', 
+                        boxShadow: '0 2px 8px rgba(0,0,0,0.05)', 
+                        border: '1px solid var(--border-color)',
+                        height: '52px',
+                        borderRadius: '6px'
+                      }} 
+                    />
+                  </div>
+                  
+                  <button
+                    onClick={() => setIsAdvancedSearchOpen(!isAdvancedSearchOpen)}
+                    className="sharp-btn"
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      padding: '0 24px',
+                      height: '52px',
+                      backgroundColor: 'white',
+                      border: '1px solid var(--border-color)',
+                      borderRadius: '6px',
+                      boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
+                      fontSize: '14px',
+                      fontWeight: 500,
+                      color: 'var(--text-primary)',
+                      cursor: 'pointer'
                     }}
-                  />
-                ))}
+                  >
+                    <SlidersHorizontal size={18} color="var(--accent-blue)" />
+                    Kengaytirilgan qidiruv
+                  </button>
+                </div>
+
+                <AdvancedSearchPanel
+                  isOpen={isAdvancedSearchOpen}
+                  filters={filters}
+                  onFilterChange={handleFilterChange}
+                />
+
+
+                {/* Maqolalar Header */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', borderBottom: '1px solid var(--border-color)', paddingBottom: '12px' }}>
+                  <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '20px', fontWeight: 600, color: 'var(--text-primary)' }}>
+                    {filters.categories.length > 0 ? `Tanlangan toifalar: ${filters.categories.join(', ')}` : 'Barcha maqolalar'}
+                    {filters.selectedTags.length > 0 && ` (${filters.selectedTags.map(t => `#${t}`).join(', ')})`}
+                  </h3>
+                  <span style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>Jami: <strong>{filteredAndSortedArticles.length}</strong> ta maqola</span>
+                </div>
+
+                {/* Maqolalar Ro'yxati */}
+                {filteredAndSortedArticles.length > 0 ? (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }} className="articles-list">
+                    {filteredAndSortedArticles.map(article => (
+                      <ArticleCard key={article.id} article={article} onSelect={() => { window.location.hash = `#/article/${article.id}`; }} />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="sharp-panel" style={{ textAlign: 'center', padding: '64px 20px', backgroundColor: 'var(--bg-panel)', borderStyle: 'dashed', borderRadius: '8px' }}>
+                    <Info size={32} color="var(--accent-blue)" style={{ marginBottom: '16px', opacity: 0.8 }} />
+                    <h4 style={{ fontSize: '18px', fontWeight: 500, marginBottom: '8px', color: 'var(--text-primary)' }}>Maqola topilmadi</h4>
+                    <p style={{ color: 'var(--text-secondary)', fontSize: '14px', maxWidth: '380px', margin: '0 auto' }}>Belgilangan qidiruv parametrlari va filtrlarga mos keladigan maqola topilmadi.</p>
+                  </div>
+                )}
               </div>
-            ) : (
-              <div className="sharp-panel" style={{
-                textAlign: 'center',
-                padding: '48px',
-                backgroundColor: 'var(--bg-panel)',
-                borderStyle: 'dashed'
-              }}>
-                <Info size={32} color="var(--accent-blue)" style={{ marginBottom: '16px' }} />
-                <h4 style={{ fontSize: '18px', fontWeight: 500, marginBottom: '8px' }}>Maqola topilmadi</h4>
-                <p style={{ color: 'var(--text-secondary)', fontSize: '14px', maxWidth: '380px', margin: '0 auto' }}>
-                  Belgilangan qidiruv parametrlari va filtrlarga mos keladigan maqola topilmadi.
-                </p>
-                <button 
-                  className="sharp-btn primary"
-                  onClick={clearAllFilters}
-                  style={{ marginTop: '20px', fontSize: '12px' }}
-                >
-                  Filtrlarni tozalash
-                </button>
-              </div>
-            )}
+
+              {/* O'ng qism: Vertikal Sidebar Filtr */}
+              <aside style={{ width: '320px', flexShrink: 0, position: 'sticky', top: '24px' }}>
+                <FilterPanel filters={filters} onFilterChange={handleFilterChange} allTags={allTags} allAuthors={allAuthors} />
+              </aside>
+            </div>
           </div>
         </div>
       </main>
@@ -275,7 +299,7 @@ function App() {
           alignItems: 'center',
           flexWrap: 'wrap',
           gap: '20px',
-          maxWidth: '1000px',
+          maxWidth: '1400px',
           margin: '0 auto'
         }}>
           <div>
@@ -294,8 +318,7 @@ function App() {
         </div>
       </footer>
 
-
-    </div>
+      </div>
   );
 }
 

@@ -26,168 +26,144 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({ article, onSelect }) =
       style={{
         display: 'flex',
         flexDirection: 'column',
-        justifyContent: 'space-between',
-        height: '100%',
-        gap: '18px'
+        gap: '12px'
       }}
     >
-      {/* Kategoriya va Sana */}
+      {/* Yuqori qator: Teglar va sana */}
       <div style={{
         display: 'flex',
-        justifyContent: 'space-between',
         alignItems: 'center',
+        gap: '12px',
         fontSize: '12px',
         color: 'var(--text-secondary)'
       }}>
-        <span className="sharp-tag" style={{
-          borderColor: 'rgba(56, 189, 248, 0.3)',
-          color: 'var(--accent-blue)'
+        <span style={{
+          backgroundColor: 'var(--accent-blue)',
+          color: 'white',
+          padding: '4px 10px',
+          borderRadius: '4px',
+          fontWeight: 600,
+          fontFamily: 'var(--font-sans)'
         }}>
           {article.category}
         </span>
-        <span style={{ fontSize: '11px' }}>{article.publishedAt} • {article.readTime} daqiqa</span>
+        <span>{article.publishedAt}</span>
+        <span>•</span>
+        <span>{article.readTime} daqiqa</span>
       </div>
 
-      {/* Sarlavha va Tavsif */}
-      <div style={{ flexGrow: 1 }}>
-        <h4 style={{
-          fontSize: '18px',
-          fontWeight: 400,
-          lineHeight: '1.35',
-          marginBottom: '8px',
-          color: 'var(--text-primary)'
-        }}>
-          {article.title}
-        </h4>
-        <p style={{
-          fontSize: '13px',
-          color: 'var(--text-secondary)',
-          lineHeight: '1.5',
-          display: '-webkit-box',
-          WebkitLineClamp: 3,
-          WebkitBoxOrient: 'vertical',
-          overflow: 'hidden'
-        }}>
-          {article.summary}
-        </p>
-      </div>
-
-      {/* DOI va Nashriyot ma'lumotlari */}
-      {article.doi && (
-        <div 
-          onClick={(e) => e.stopPropagation()} // Card click hodisasi bilan to'qnashmasligi uchun
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            padding: '8px 12px',
-            backgroundColor: 'var(--bg-input)',
-            border: '1px solid var(--border-color)',
-            fontSize: '11px',
-            fontFamily: 'var(--font-sans)'
-          }}
-        >
-          <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '80%' }}>
-            <span style={{ color: 'var(--text-muted)', marginRight: '4px' }}>DOI:</span>
-            <code style={{ fontSize: '11px', padding: 0, background: 'transparent' }}>{article.doi}</code>
-          </div>
-          <button 
-            onClick={handleCopyDoi}
-            style={{
-              background: 'none',
-              border: 'none',
-              color: copied ? 'var(--accent-teal)' : 'var(--text-secondary)',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              padding: '2px'
-            }}
-            title="DOI havolasini nusxalash"
-          >
-            {copied ? <Check size={12} /> : <Copy size={12} />}
-          </button>
-        </div>
-      )}
-
-      {/* Muallif Haqida */}
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: '10px',
-        borderTop: '1px solid var(--border-color)',
-        paddingTop: '12px'
+      {/* Sarlavha (Original shrift saqlanadi) */}
+      <h4 style={{
+        fontSize: '22px',
+        fontWeight: 600,
+        fontFamily: 'var(--font-heading)',
+        color: 'var(--accent-blue)',
+        lineHeight: '1.3',
+        margin: '4px 0 0 0'
       }}>
-        <div style={{
-          width: '30px',
-          height: '30px',
-          backgroundColor: 'var(--border-color)',
-          color: 'var(--accent-teal)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          fontWeight: 700,
-          fontSize: '12px'
-        }}>
-          {article.author.avatar}
-        </div>
-        <div style={{ overflow: 'hidden' }}>
-          <h6 style={{ fontSize: '13px', fontWeight: 500, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-            {article.author.name}
-          </h6>
-          <p style={{ fontSize: '11px', color: 'var(--text-muted)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-            {article.author.institution || article.author.role}
-          </p>
-        </div>
+        {article.title}
+      </h4>
+
+      {/* Muallif va tashkilot */}
+      <div style={{
+        fontSize: '14px',
+        color: 'var(--text-secondary)',
+        fontFamily: 'var(--font-sans)'
+      }}>
+        <span style={{ color: 'var(--text-primary)', fontWeight: 500 }}>
+          {article.author.name}
+        </span>
+        {article.author.institution && ` — ${article.author.institution}`}
       </div>
 
-      {/* Statistika va Havolalar */}
+      {/* Tavsif */}
+      <p style={{
+        fontSize: '14px',
+        color: 'var(--text-primary)',
+        lineHeight: '1.6',
+        marginTop: '8px',
+        marginBottom: '12px'
+      }}>
+        {article.summary}
+      </p>
+
+      {/* Pastki qator: DOI, Statistika, Havolalar */}
       <div style={{
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
-        fontSize: '11px',
+        borderTop: '1px solid var(--border-color)',
+        paddingTop: '12px',
+        fontSize: '13px',
         color: 'var(--text-secondary)',
-        borderTop: '1px dotted var(--border-color)',
-        paddingTop: '10px'
+        fontFamily: 'var(--font-sans)',
+        flexWrap: 'wrap',
+        gap: '12px'
       }} onClick={(e) => e.stopPropagation()}>
-        <div style={{ display: 'flex', gap: '12px' }}>
-          <span style={{ display: 'flex', alignItems: 'center', gap: '3px' }} title="Ko'rishlar soni">
-            <Eye size={12} /> {article.views}
-          </span>
-          <span style={{ display: 'flex', alignItems: 'center', gap: '3px' }} title="Yoqtirishlar soni">
-            <ThumbsUp size={12} /> {article.likes}
-          </span>
-          <span style={{ display: 'flex', alignItems: 'center', gap: '3px' }} title="Iqtiboslar soni">
-            <Quote size={12} /> {article.citationsCount || 0}
-          </span>
+        
+        {/* DOI */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          {article.doi && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <span style={{ fontWeight: 600 }}>DOI:</span>
+              <code>{article.doi}</code>
+              <button 
+                onClick={handleCopyDoi}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: copied ? 'var(--accent-blue)' : 'var(--text-muted)',
+                  cursor: 'pointer',
+                  padding: '2px'
+                }}
+                title="DOI nusxalash"
+              >
+                {copied ? <Check size={14} /> : <Copy size={14} />}
+              </button>
+            </div>
+          )}
         </div>
 
-        {/* Hujjat yuklash yoki tashqi havola */}
-        <div style={{ display: 'flex', gap: '8px' }}>
-          {article.downloadUrl && (
-            <a 
-              href={article.downloadUrl} 
-              target="_blank" 
-              rel="noreferrer"
-              className="sharp-tag interactive"
-              style={{ padding: '2px 6px', fontSize: '10px' }}
-              title="PDF yuklab olish"
-            >
-              <Download size={10} style={{ marginRight: '3px' }} /> PDF
-            </a>
-          )}
-          {article.externalUrl && (
-            <a 
-              href={article.externalUrl} 
-              target="_blank" 
-              rel="noreferrer"
-              className="sharp-tag interactive"
-              style={{ padding: '2px 6px', fontSize: '10px' }}
-              title="Asl manbaga o'tish"
-            >
-              <ExternalLink size={10} style={{ marginRight: '3px' }} /> Manba
-            </a>
-          )}
+        {/* Statistika va Havolalar */}
+        <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
+          <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }} title="Ko'rishlar">
+            <Eye size={14} /> {article.views}
+          </span>
+          <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }} title="Yoqtirishlar">
+            <ThumbsUp size={14} /> {article.likes}
+          </span>
+          <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }} title="Iqtiboslar">
+            <Quote size={14} /> {article.citationsCount || 0}
+          </span>
+          
+          <div style={{ display: 'flex', gap: '8px', marginLeft: '8px' }}>
+            {article.downloadUrl && (
+              <a 
+                href={article.downloadUrl} 
+                target="_blank" 
+                rel="noreferrer"
+                style={{ 
+                  display: 'flex', alignItems: 'center', gap: '4px', 
+                  color: 'var(--accent-blue)', fontWeight: 600, textDecoration: 'none' 
+                }}
+              >
+                <Download size={14} /> PDF
+              </a>
+            )}
+            {article.externalUrl && (
+              <a 
+                href={article.externalUrl} 
+                target="_blank" 
+                rel="noreferrer"
+                style={{ 
+                  display: 'flex', alignItems: 'center', gap: '4px', 
+                  color: 'var(--text-primary)', fontWeight: 500, textDecoration: 'none' 
+                }}
+              >
+                <ExternalLink size={14} /> Manba
+              </a>
+            )}
+          </div>
         </div>
       </div>
     </article>

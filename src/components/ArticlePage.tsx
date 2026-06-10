@@ -47,7 +47,7 @@ export const ArticlePage: React.FC<ArticlePageProps> = ({
 
   return (
     <div className="app-container" style={{ padding: '40px 20px 80px 20px' }}>
-      <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
+      <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
         {/* Orqaga qaytish tugmasi */}
         <button 
           onClick={onClose}

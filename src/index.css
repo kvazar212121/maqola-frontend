@@ -1,34 +1,33 @@
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,300;0,400;0,700;1,300;1,400&family=Outfit:wght@400;500;600;700;800&display=swap');
 
 :root {
-  /* Ranglar palitrasi - Oq / Ochiq dizayn */
-  --bg-main: #f5f7f6;          /* Ochiq kulrang-yashil fon (ko'zni og'ritmaydi) */
-  --bg-panel: #ffffff;         /* Panellar uchun toza oq rang */
-  --bg-panel-hover: #fafcfb;   /* Hover paneli */
-  --bg-input: #ffffff;         /* Input maydoni foni */
+  /* Zenodo uslubidagi ranglar palitrasi */
+  --bg-main: #f5f5f5;          
+  --bg-panel: #ffffff;         
+  --bg-panel-hover: #fdfdfd;   
+  --bg-input: #ffffff;         
   
-  --border-color: #cbd5ce;     /* Chegaralar uchun yumshoq kulrang-yashil */
-  --border-color-hover: #9bb0a2; /* Hover chegarasi */
+  --border-color: #e5e5e5;     
+  --border-color-hover: #cccccc; 
   
-  --text-primary: #1c2620;     /* To'q yashil-kulrang yozuvlar (tim qora emas, yumshoq va aniq) */
-  --text-secondary: #4a5c50;   /* Ikkinchi darajali matn */
-  --text-muted: #728578;       /* Muted matn */
+  --text-primary: #333333;     
+  --text-secondary: #777777;   
+  --text-muted: #999999;       
   
-  --accent-blue: #0284c7;      /* To'qroq havorang (primary aksent) */
-  --accent-teal: #0d9488;      /* To'qroq yashil-havorang (secondary aksent) */
-  --accent-blue-rgb: 2, 132, 199;
-  --accent-teal-rgb: 13, 148, 136;
+  --accent-blue: #005baa;      /* Zenodo asosiy ko'k rangi (Primary) */
+  --accent-orange: #ff9900;    /* Zenodo ro'yxatdan o'tish tugmasi rangi */
+  --accent-blue-rgb: 0, 91, 170;
   
-  --shadow-color: #cbd5ce;     /* Soya uchun yumshoq chegara rangi */
-  --bg-header-rgba: rgba(255, 255, 255, 0.9); /* Header uchun shaffof oq fon */
+  --shadow-color: #e5e5e5;     
+  --bg-header-rgba: #005baa;   /* Header endi to'liq ko'k bo'ladi */
   
   /* Shriftlar */
   --font-sans: 'Inter', sans-serif;
   --font-heading: 'Cinzel', serif;
   --font-article: 'Merriweather', Georgia, serif;
   
-  /* Burchaklar mutlaqo o'tkir bo'lishi uchun */
-  --radius-sharp: 0px;
+  /* Burchaklar */
+  --radius-sharp: 4px;
 }
 
 /* Global Reset va Standartlar */
@@ -125,25 +124,25 @@ a {
 }
 
 .sharp-btn.primary {
-  background-color: rgba(56, 189, 248, 0.08);
+  background-color: rgba(0, 91, 170, 0.05);
   border-color: var(--accent-blue);
   color: var(--accent-blue);
 }
 
 .sharp-btn.primary:hover {
-  background-color: rgba(56, 189, 248, 0.15);
-  box-shadow: 4px 4px 0px 0px rgba(56, 189, 248, 0.2);
+  background-color: rgba(0, 91, 170, 0.1);
+  box-shadow: 4px 4px 0px 0px rgba(0, 91, 170, 0.2);
 }
 
 .sharp-btn.teal {
-  background-color: rgba(45, 212, 191, 0.08);
-  border-color: var(--accent-teal);
-  color: var(--accent-teal);
+  background-color: rgba(255, 153, 0, 0.08);
+  border-color: var(--accent-orange);
+  color: var(--accent-orange);
 }
 
 .sharp-btn.teal:hover {
-  background-color: rgba(45, 212, 191, 0.15);
-  box-shadow: 4px 4px 0px 0px rgba(45, 212, 191, 0.2);
+  background-color: rgba(255, 153, 0, 0.15);
+  box-shadow: 4px 4px 0px 0px rgba(255, 153, 0, 0.2);
 }
 
 /* O'tkir qirrali inputlar */
@@ -214,7 +213,7 @@ a {
 
 /* Grid va Layout yordamchi klasslari */
 .app-container {
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
   padding: 0 20px;
 }

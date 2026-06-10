@@ -1,84 +1,94 @@
 import React from 'react';
 import { LogIn } from 'lucide-react';
 
-interface HeaderProps {}
-
-export const Header: React.FC<HeaderProps> = () => {
+export const Header: React.FC = () => {
   return (
     <header style={{
-      borderBottom: '1px solid var(--border-color)',
-      backgroundColor: 'var(--bg-main)',
+      backgroundColor: 'var(--accent-blue)', // Zenodo ko'k rangi
+      color: 'white',
       position: 'sticky',
       top: 0,
       zIndex: 100,
-      backdropFilter: 'blur(8px)',
-      background: 'var(--bg-header-rgba)'
+      boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
     }}>
       <div className="app-container" style={{
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
-        height: '70px',
-        gap: '20px',
-        maxWidth: '1000px',
-        margin: '0 auto'
+        height: '65px',
+        maxWidth: '1400px',
+        margin: '0 auto',
+        padding: '0 20px'
       }}>
-        {/* Logotip */}
-        <a href="/" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <div style={{
-            backgroundColor: 'var(--accent-blue)',
-            color: '#ffffff',
-            padding: '6px 10px',
-            fontFamily: 'var(--font-heading)',
-            fontWeight: 500,
-            fontSize: '18px',
-            letterSpacing: '0.5px'
+        {/* METAMAQOLA Logotipi (Zenodo uslubida) */}
+        <a href="/" style={{ display: 'flex', alignItems: 'center', gap: '2px' }}>
+          <span style={{ 
+            fontFamily: 'var(--font-heading)', 
+            fontWeight: 800, 
+            fontSize: '26px',
+            color: 'white',
+            letterSpacing: '1px'
           }}>
-            METAMAQOLA.UZ
-          </div>
+            META
+          </span>
+          <span style={{ 
+            fontFamily: 'var(--font-heading)', 
+            fontWeight: 400, 
+            fontSize: '26px',
+            color: 'rgba(255, 255, 255, 0.8)'
+          }}>
+            MAQOLA
+          </span>
         </a>
 
         {/* Navigatsiya Menulari */}
         <nav style={{
           display: 'flex',
           gap: '24px',
-          fontSize: '14px',
-          fontFamily: 'var(--font-heading)'
-        }} className="header-nav">
-          <a href="#" style={{ color: 'var(--text-primary)', fontWeight: 600 }}>
-            Bosh Sahifa
-          </a>
-          <a 
-            href="#articles-section" 
-            style={{ color: 'var(--text-secondary)' }}
-            onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--accent-blue)')}
-            onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--text-secondary)')}
-          >
-            Maqolalar
-          </a>
-          <a 
-            href="#about" 
-            style={{ color: 'var(--text-secondary)' }}
-            onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--accent-blue)')}
-            onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--text-secondary)')}
-          >
-            Loyiha haqida
-          </a>
+          fontSize: '15px',
+          fontFamily: 'var(--font-sans)',
+          fontWeight: 500
+        }}>
+          <a href="#" style={{ color: 'white' }}>Bosh Sahifa</a>
+          <a href="#articles-section" style={{ color: 'rgba(255,255,255,0.8)' }}>Maqolalar</a>
+          <a href="#about" style={{ color: 'rgba(255,255,255,0.8)' }}>Loyiha haqida</a>
         </nav>
 
-        {/* Profil va Kirish */}
-        <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+        {/* Kirish va Ro'yxatdan o'tish tugmalari (Zenodo Style) */}
+        <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
           <button 
-            className="sharp-btn primary"
             style={{ 
-              fontSize: '13px', 
+              backgroundColor: 'transparent',
+              color: 'white',
+              border: '1px solid white',
+              borderRadius: '4px',
               padding: '6px 16px',
-              display: 'inline-flex',
+              fontSize: '14px',
+              fontWeight: 600,
+              cursor: 'pointer',
+              display: 'flex',
               alignItems: 'center',
-              gap: '6px'
+              gap: '6px',
+              fontFamily: 'var(--font-sans)'
             }}
           >
-            <LogIn size={13} /> Kirish
+            <LogIn size={16} /> Log In
+          </button>
+          
+          <button 
+            style={{ 
+              backgroundColor: 'var(--accent-orange)', // Zenodo'ning mashhur zarg'aldoq tugmasi
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
+              padding: '7px 20px',
+              fontSize: '14px',
+              fontWeight: 600,
+              cursor: 'pointer',
+              fontFamily: 'var(--font-sans)'
+            }}
+          >
+            Sign up
           </button>
         </div>
       </div>

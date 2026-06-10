@@ -44,4 +44,11 @@ export interface FilterState {
   selectedTags: string[];    // ko'p tanlovli (multi-select)
   selectedAuthors: string[]; // ko'p tanlovli (multi-select)
   sortBy: 'date' | 'views' | 'citations';
+  // Kengaytirilgan qidiruv maydonlari
+  advTitle?: string;
+  advAuthor?: string;
+  advAbstract?: string;
+  advKeywords?: string;
+  advPublisher?: string;
+  advDoi?: string;
 }
