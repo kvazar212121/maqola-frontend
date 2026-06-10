@@ -31,7 +31,8 @@ export interface Article {
   featured?: boolean;
   doi?: string; // Digital Object Identifier - ilmiy maqolalar uchun muhim havola
   publisher?: string; // Nashriyot nomi (masalan, IEEE, Springer, O'zMU xabarlari)
-  downloadUrl?: string; // PDF yuklab olish uchun havola
+  pdfUrl?: string; // PDF faylni ko'rish va yuklab olish uchun havola
+  downloadUrl?: string; // Eski havola
   externalUrl?: string; // Asl manba havolasi (link)
   citationsCount?: number; // Iqtiboslar soni
 }

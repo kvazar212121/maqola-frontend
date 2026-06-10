@@ -92,6 +92,7 @@ Sun'iy intellekt shifokorlarni butunlay almashtirmaydi, balki ularning ajralmas 
     featured: true,
     doi: '10.31219/osf.io/med-diag-ai-2026',
     publisher: 'O\'zbekiston Tibbiyot Jurnali',
+    pdfUrl: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
     downloadUrl: 'https://example.com/files/ai-medicine-paper.pdf',
     externalUrl: 'https://journal.tma.uz/article/view/1234',
     citationsCount: 24

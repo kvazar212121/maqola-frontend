@@ -161,6 +161,42 @@ export const ArticlePage: React.FC<ArticlePageProps> = ({
                 })}
               </div>
 
+              {/* Fayllar (Files) Bo'limi */}
+              {(article.pdfUrl || article.downloadUrl) && (
+                <div style={{ marginTop: '40px' }}>
+                  <h3 style={{ fontSize: '20px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '16px', borderBottom: '1px solid var(--border-color)', paddingBottom: '8px' }}>
+                    Fayllar (Files)
+                  </h3>
+                  <div className="sharp-panel" style={{ padding: '0', overflow: 'hidden' }}>
+                    {/* Header */}
+                    <div style={{ padding: '12px 16px', backgroundColor: 'var(--bg-main)', borderBottom: '1px solid var(--border-color)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span style={{ fontSize: '14px', fontWeight: 500, color: 'var(--accent-blue)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        📄 {article.title.substring(0, 40)}{article.title.length > 40 ? '...' : ''}.pdf
+                      </span>
+                      <a 
+                        href={article.pdfUrl || article.downloadUrl} 
+                        target="_blank" 
+                        rel="noreferrer"
+                        className="sharp-btn primary"
+                        style={{ padding: '6px 12px', fontSize: '12px' }}
+                      >
+                        <Download size={14} /> Yuklab olish
+                      </a>
+                    </div>
+                    {/* PDF Viewer Iframe */}
+                    <div style={{ height: '600px', width: '100%', backgroundColor: '#525659' }}>
+                      <iframe 
+                        src={article.pdfUrl || article.downloadUrl} 
+                        width="100%" 
+                        height="100%" 
+                        style={{ border: 'none' }}
+                        title="PDF Viewer"
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
+
               {/* Iqtibos keltirish bo'limi */}
               <div 
                 className="sharp-panel"
