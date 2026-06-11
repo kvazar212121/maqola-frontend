@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { ArrowLeft, Calendar, Clock, Eye, ThumbsUp, Quote, ExternalLink, Download, Copy, Check, Mail, Globe, Bookmark } from 'lucide-react';
+import React, { useState, useRef } from 'react';
+import { ArrowLeft, Calendar, Clock, Eye, ThumbsUp, Quote, ExternalLink, Download, Copy, Check, Mail, Globe, Bookmark, Maximize } from 'lucide-react';
 import type { Article } from '../types';
 
 interface ArticlePageProps {
@@ -17,14 +17,27 @@ export const ArticlePage: React.FC<ArticlePageProps> = ({
 }) => {
   const [copiedCitation, setCopiedCitation] = useState(false);
   const [copiedDoi, setCopiedDoi] = useState(false);
+  const pdfContainerRef = useRef<HTMLDivElement>(null);
+
+  const handleFullscreen = () => {
+    if (pdfContainerRef.current) {
+      if (document.fullscreenElement) {
+        document.exitFullscreen().catch(err => console.log(err));
+      } else {
+        pdfContainerRef.current.requestFullscreen().catch(err => console.log(err));
+      }
+    }
+  };
+
+  const authorName = article.authors && article.authors.length > 0 ? article.authors[0].name : 'Noma\'lum';
+  const cleanAuthorName = authorName.replace('Dr. ', '');
+  const authorNameParts = cleanAuthorName.split(' ');
+  const initial = authorNameParts.length > 0 ? authorNameParts[0].charAt(0) : '';
 
   // Akademik iqtibos (Citation) matnini shakllantirish
   const generateCitation = () => {
-    const year = new Date(article.publishedAt).getFullYear();
-    const cleanAuthorName = article.author.name.replace('Dr. ', '');
-    const names = cleanAuthorName.split(' ');
-    const lastName = names[names.length - 1];
-    const initial = names[0].charAt(0);
+    const year = article.publisherDate ? new Date(article.publisherDate).getFullYear() : new Date().getFullYear();
+    const lastName = authorNameParts[authorNameParts.length - 1] || '';
     const publisherText = article.publisher ? `. *${article.publisher}*` : '';
     const doiText = article.doi ? `. DOI: ${article.doi}` : '';
     
@@ -95,15 +108,11 @@ export const ArticlePage: React.FC<ArticlePageProps> = ({
               color: 'var(--accent-blue)',
               backgroundColor: 'rgba(2, 132, 199, 0.05)'
             }}>
-              {article.category}
+              {article.journal || article.accessType || 'Ilmiy maqola'}
             </span>
             <span>•</span>
             <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-              <Calendar size={13} /> {article.publishedAt}
-            </span>
-            <span>•</span>
-            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-              <Clock size={13} /> {article.readTime} daqiqa o'qish
+              <Calendar size={13} /> {article.publisherDate}
             </span>
           </div>
 
@@ -140,29 +149,21 @@ export const ArticlePage: React.FC<ArticlePageProps> = ({
                   gap: '20px'
                 }}
               >
-                {article.content.split('\n\n').map((paragraph, index) => {
-                  if (paragraph.startsWith('### ')) {
-                    return <h3 key={index} style={{ fontSize: '22px', fontWeight: 600, marginTop: '24px', color: 'var(--text-primary)', borderBottom: '1px dotted var(--border-color)', paddingBottom: '8px' }}>{paragraph.replace('### ', '')}</h3>;
-                  }
-                  if (paragraph.startsWith('#### ')) {
-                    return <h4 key={index} style={{ fontSize: '18px', fontWeight: 600, marginTop: '16px', color: 'var(--accent-teal)' }}>{paragraph.replace('#### ', '')}</h4>;
-                  }
-                  if (paragraph.startsWith('* ')) {
-                    const listItems = paragraph.split('\n');
-                    return (
-                      <ul key={index} style={{ paddingLeft: '24px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                        {listItems.map((item, itemIdx) => (
-                          <li key={itemIdx}>{item.replace('* ', '')}</li>
-                        ))}
-                      </ul>
-                    );
-                  }
-                  return <p key={index} style={{ color: 'var(--text-secondary)', textAlign: 'justify' }}>{paragraph}</p>;
-                })}
+                {article.abstract && article.abstract !== 'n/a' ? (
+                  <div 
+                    style={{ color: 'var(--text-secondary)', textAlign: 'justify' }}
+                    dangerouslySetInnerHTML={{ __html: article.abstract }}
+                  />
+                ) : (
+                  <p style={{ color: 'var(--text-muted)', fontStyle: 'italic' }}>Annotatsiya mavjud emas.</p>
+                )}
               </div>
 
               {/* Fayllar (Files) Bo'limi */}
-              {(article.pdfUrl || article.downloadUrl) && (
+              {(article.pdfUrl || article.url) && (() => {
+                const rawPdfUrl = article.pdfUrl || article.url;
+                const proxyUrl = `http://localhost:8080/api/v1/proxy/pdf?url=${encodeURIComponent(rawPdfUrl)}`;
+                return (
                 <div style={{ marginTop: '40px' }}>
                   <h3 style={{ fontSize: '20px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '16px', borderBottom: '1px solid var(--border-color)', paddingBottom: '8px' }}>
                     Fayllar (Files)
@@ -173,29 +174,40 @@ export const ArticlePage: React.FC<ArticlePageProps> = ({
                       <span style={{ fontSize: '14px', fontWeight: 500, color: 'var(--accent-blue)', display: 'flex', alignItems: 'center', gap: '8px' }}>
                         📄 {article.title.substring(0, 40)}{article.title.length > 40 ? '...' : ''}.pdf
                       </span>
-                      <a 
-                        href={article.pdfUrl || article.downloadUrl} 
-                        target="_blank" 
-                        rel="noreferrer"
-                        className="sharp-btn primary"
-                        style={{ padding: '6px 12px', fontSize: '12px' }}
-                      >
-                        <Download size={14} /> Yuklab olish
-                      </a>
+                      <div style={{ display: 'flex', gap: '8px' }}>
+                        <button 
+                          onClick={handleFullscreen}
+                          className="sharp-btn"
+                          style={{ padding: '6px 12px', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}
+                        >
+                          <Maximize size={14} /> To'liq ekran
+                        </button>
+                        <a 
+                          href={rawPdfUrl} 
+                          target="_blank" 
+                          rel="noreferrer"
+                          className="sharp-btn primary"
+                          style={{ padding: '6px 12px', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}
+                        >
+                          <Download size={14} /> Yuklab olish
+                        </a>
+                      </div>
                     </div>
                     {/* PDF Viewer Iframe */}
-                    <div style={{ height: '600px', width: '100%', backgroundColor: '#525659' }}>
+                    <div ref={pdfContainerRef} style={{ height: '600px', width: '100%', backgroundColor: '#525659' }}>
                       <iframe 
-                        src={article.pdfUrl || article.downloadUrl} 
+                        src={proxyUrl} 
                         width="100%" 
                         height="100%" 
                         style={{ border: 'none' }}
                         title="PDF Viewer"
+                        allowFullScreen
                       />
                     </div>
                   </div>
                 </div>
-              )}
+                );
+              })()}
 
               {/* Iqtibos keltirish bo'limi */}
               <div 
@@ -307,44 +319,71 @@ export const ArticlePage: React.FC<ArticlePageProps> = ({
                     </div>
                   )}
 
-                  <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border-color)', paddingBottom: '8px' }}>
-                    <span style={{ color: 'var(--text-muted)' }}>Iqtiboslar:</span>
-                    <span style={{ fontWeight: 500, display: 'flex', alignItems: 'center', gap: '4px' }}>
-                      <Quote size={13} /> {article.citationsCount || 0} ta
-                    </span>
-                  </div>
+                  {article.publisherDate && (
+                    <div style={{ display: 'flex', flexDirection: 'column', borderBottom: '1px solid var(--border-color)', paddingBottom: '8px' }}>
+                      <span style={{ color: 'var(--text-muted)', fontSize: '11px' }}>Nashr sanasi:</span>
+                      <span style={{ fontWeight: 500, marginTop: '2px' }}>{article.publisherDate}</span>
+                    </div>
+                  )}
+
+                  {article.journal && (
+                    <div style={{ display: 'flex', flexDirection: 'column', borderBottom: '1px solid var(--border-color)', paddingBottom: '8px' }}>
+                      <span style={{ color: 'var(--text-muted)', fontSize: '11px' }}>Jurnal:</span>
+                      <span style={{ fontWeight: 500, marginTop: '2px' }}>{article.journal}</span>
+                    </div>
+                  )}
+
+                  {article.accessType && (
+                    <div style={{ display: 'flex', flexDirection: 'column', borderBottom: '1px solid var(--border-color)', paddingBottom: '8px' }}>
+                      <span style={{ color: 'var(--text-muted)', fontSize: '11px' }}>Ruxsat turi:</span>
+                      <span style={{ fontWeight: 500, marginTop: '2px' }}>{article.accessType}</span>
+                    </div>
+                  )}
+
+                  {article.keyWords && article.keyWords.length > 0 && (
+                    <div style={{ display: 'flex', flexDirection: 'column', borderBottom: '1px solid var(--border-color)', paddingBottom: '8px' }}>
+                      <span style={{ color: 'var(--text-muted)', fontSize: '11px' }}>Kalit so'zlar:</span>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', marginTop: '4px' }}>
+                        {article.keyWords.map((kw, i) => (
+                          <span key={i} style={{ backgroundColor: 'var(--bg-panel)', padding: '2px 6px', borderRadius: '4px', fontSize: '11px', border: '1px solid var(--border-color)' }}>
+                            #{kw}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
 
                   <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border-color)', paddingBottom: '8px' }}>
                     <span style={{ color: 'var(--text-muted)' }}>Ko'rildi:</span>
                     <span style={{ fontWeight: 500, display: 'flex', alignItems: 'center', gap: '4px' }}>
-                      <Eye size={13} /> {article.views}
+                      <Eye size={13} /> {article.viewsCount}
                     </span>
                   </div>
                 </div>
 
                 {/* Hujjat yuklash va havola */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '20px' }}>
-                  {article.downloadUrl && (
+                  {article.url && (
                     <a 
-                      href={article.downloadUrl} 
+                      href={article.url} 
                       target="_blank" 
                       rel="noreferrer"
                       className="sharp-btn primary"
                       style={{ width: '100%', fontSize: '12px', padding: '10px' }}
                     >
-                      <Download size={14} /> Yuklab olish (PDF)
+                      <ExternalLink size={14} /> Asl manbaga o'tish
                     </a>
                   )}
 
-                  {article.externalUrl && (
+                  {article.sourceUrl && article.sourceUrl !== article.url && (
                     <a 
-                      href={article.externalUrl} 
+                      href={article.sourceUrl} 
                       target="_blank" 
                       rel="noreferrer"
                       className="sharp-btn"
                       style={{ width: '100%', fontSize: '12px', padding: '10px' }}
                     >
-                      <ExternalLink size={14} /> Asl manba havolasi
+                      <ExternalLink size={14} /> Boshqa manba havolasi
                     </a>
                   )}
 
@@ -354,7 +393,7 @@ export const ArticlePage: React.FC<ArticlePageProps> = ({
                     className={`sharp-btn ${hasLiked ? 'teal' : ''}`}
                     style={{ width: '100%', fontSize: '12px', padding: '10px' }}
                   >
-                    <ThumbsUp size={14} /> {hasLiked ? "Sizga yoqdi" : "Yoqdi deb belgilash"} ({article.likes + (hasLiked ? 1 : 0)})
+                    <ThumbsUp size={14} /> {hasLiked ? "Sizga yoqdi" : "Yoqdi deb belgilash"}
                   </button>
                 </div>
               </div>
@@ -387,44 +426,24 @@ export const ArticlePage: React.FC<ArticlePageProps> = ({
                     fontWeight: 700,
                     fontSize: '16px'
                   }}>
-                    {article.author.avatar}
+                    {initial}
                   </div>
                   <div>
-                    <h5 style={{ fontSize: '14px', fontWeight: 600 }}>{article.author.name}</h5>
-                    <p style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{article.author.role}</p>
+                    <h5 style={{ fontSize: '14px', fontWeight: 600 }}>{authorName}</h5>
                   </div>
                 </div>
 
-                <p style={{ fontSize: '12px', color: 'var(--text-secondary)', lineHeight: '1.5', marginBottom: '14px' }}>
-                  {article.author.bio}
-                </p>
-
-                {article.author.institution && (
+                {article.authors && article.authors.length > 0 && article.authors[0].affiliation && (
                   <div style={{ fontSize: '12px', color: 'var(--text-primary)', marginBottom: '16px', padding: '8px 12px', backgroundColor: 'var(--bg-main)', borderLeft: '2px solid var(--accent-teal)' }}>
-                    <strong>Tashkilot:</strong> {article.author.institution}
+                    <strong>Tashkilot:</strong> {article.authors[0].affiliation}
                   </div>
                 )}
 
                 {/* Ijtimoiy tarmoqlar */}
                 <div style={{ display: 'flex', gap: '8px', borderTop: '1px solid var(--border-color)', paddingTop: '14px', flexWrap: 'wrap' }}>
-                  {article.author.socialLinks.email && (
-                    <a href={`mailto:${article.author.socialLinks.email}`} className="sharp-btn" style={{ padding: '6px 10px' }} title="Elektron pochta">
-                      <Mail size={14} />
-                    </a>
-                  )}
-                  {article.author.socialLinks.website && (
-                    <a href={article.author.socialLinks.website} target="_blank" rel="noreferrer" className="sharp-btn" style={{ padding: '6px 10px' }} title="Veb-sayt">
-                      <Globe size={14} />
-                    </a>
-                  )}
-                  {article.author.socialLinks.github && (
-                    <a href={article.author.socialLinks.github} target="_blank" rel="noreferrer" className="sharp-btn" style={{ padding: '6px 12px', fontSize: '11px', gap: '4px' }} title="GitHub">
-                      <Globe size={12} /> <span>GitHub</span>
-                    </a>
-                  )}
-                  {article.author.socialLinks.linkedin && (
-                    <a href={article.author.socialLinks.linkedin} target="_blank" rel="noreferrer" className="sharp-btn" style={{ padding: '6px 12px', fontSize: '11px', gap: '4px' }} title="LinkedIn">
-                      <Globe size={12} /> <span>LinkedIn</span>
+                  {article.authors && article.authors.length > 0 && article.authors[0].orcid && (
+                    <a href={article.authors[0].orcid} target="_blank" rel="noreferrer" className="sharp-btn" style={{ padding: '6px 12px', fontSize: '11px', gap: '4px' }} title="ORCID">
+                      <Globe size={12} /> <span>ORCID</span>
                     </a>
                   )}
                 </div>

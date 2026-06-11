@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import { Header } from './components/Header';
 import { Hero } from './components/Hero';
 import { FilterPanel } from './components/FilterPanel';
@@ -6,9 +6,8 @@ import { ArticleCard } from './components/ArticleCard';
 import { ArticlePage } from './components/ArticlePage';
 import { AdvancedSearchPanel } from './components/AdvancedSearchPanel';
 import { AboutPage } from './components/AboutPage';
-import { mockArticles } from './mockData';
 import type { Article, FilterState } from './types';
-import { Info, Search, SlidersHorizontal } from 'lucide-react';
+import { Info, Search, SlidersHorizontal, Loader2 } from 'lucide-react';
 
 function App() {
   const [filters, setFilters] = useState<FilterState>({
@@ -24,6 +23,13 @@ function App() {
   const [likedArticles, setLikedArticles] = useState<string[]>([]);
   const [isAdvancedSearchOpen, setIsAdvancedSearchOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const [articles, setArticles] = useState<Article[]>([]);
+  const [totalArticles, setTotalArticles] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
+
+  // Ref orqali eng oxirgi articles qiymatini saqlash (stale closure muammosini hal qilish)
+  const articlesRef = useRef<Article[]>([]);
+  articlesRef.current = articles;
 
   // Hash routing yordamida alohida sahifalarni boshqarish
   useEffect(() => {
@@ -31,20 +37,19 @@ function App() {
       const hash = window.location.hash;
       if (hash.startsWith('#/article/')) {
         const id = hash.replace('#/article/', '');
-        const article = mockArticles.find(art => art.id === id);
-        if (article) {
-          setSelectedArticle(article);
-          setCurrentPath('article');
-          window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
-
-          // Backendga maqola o'qilganligi haqida xabar yuborish (ko'rishlar sonini oshirish uchun)
-          // Bu orqali backend eng ko'p o'qilgan maqolalarni hisoblaydi
-          fetch(`/api/articles/${id}/view`, { method: 'POST' }).catch(err => {
-            console.warn("Backend view tracking failed:", err);
-          });
-
-          return;
+        // Avval yuklangan maqolalardan topamiz
+        const found = articlesRef.current.find(art => art.id === id);
+        if (found) {
+          setSelectedArticle(found);
         }
+        setCurrentPath('article');
+        window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
+
+        fetch(`http://localhost:8080/api/v1/articles/${id}/views`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ views: 1 }) }).catch(err => {
+          console.warn("Backend view tracking failed:", err);
+        });
+
+        return;
       } else if (hash === '#/articles') {
         setCurrentPath('articles');
       } else if (hash === '#/about') {
@@ -62,83 +67,46 @@ function App() {
   }, []);
 
   const handleCloseArticle = () => {
-    window.location.hash = '';
+    window.location.hash = '#/articles';
   };
 
-  // Barcha mavjud kalit so'zlarni (tags) yig'ish
+  const isHome = currentPath === 'home';
+
+  // Maqolalarni backenddan tortib kelish
+  useEffect(() => {
+    const fetchArticles = async () => {
+      setIsLoading(true);
+      try {
+        const params = new URLSearchParams();
+        const limit = isHome ? '6' : '20';
+        params.append('limit', limit);
+        params.append('page', currentPage.toString());
+        
+        if (filters.searchQuery) params.append('title', filters.searchQuery);
+        if (filters.advTitle) params.append('title', filters.advTitle);
+        if (filters.advAuthor) params.append('authorName', filters.advAuthor);
+        if (filters.advPublisher) params.append('publisher', filters.advPublisher);
+        if (filters.advKeywords) params.append('keyWord', filters.advKeywords);
+
+        const res = await fetch(`http://localhost:8080/api/v1/articles?${params.toString()}`);
+        const json = await res.json();
+        if (json.data) {
+          setArticles(json.data);
+          setTotalArticles(json.total || 0);
+        }
+      } catch (err) {
+        console.error("Failed to fetch articles:", err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchArticles();
+  }, [isHome, currentPage, filters]);
+
   const allTags = useMemo(() => {
-    const tagsSet = new Set<string>();
-    mockArticles.forEach(art => art.tags.forEach(tag => tagsSet.add(tag)));
-    return Array.from(tagsSet);
+    // Backend API'dan barcha teglarni olish kerak, ammo hozircha statik
+    return ['Texnologiya', 'Sun\'iy intellekt', 'Tibbiyot', 'Iqtisodiyot', 'IT'];
   }, []);
-
-  // Filtrlangan va saralangan maqolalar
-  const filteredAndSortedArticles = useMemo(() => {
-    let result = [...mockArticles];
-
-    // Qidiruv bo'yicha filter
-    if (filters.searchQuery.trim() !== '') {
-      const query = filters.searchQuery.toLowerCase();
-      result = result.filter(
-        art =>
-          art.title.toLowerCase().includes(query) ||
-          art.summary.toLowerCase().includes(query) ||
-          art.author.name.toLowerCase().includes(query) ||
-          art.tags.some(tag => tag.toLowerCase().includes(query))
-      );
-    }
-
-    // Kategoriyalar bo'yicha filter (ko'p tanlovli)
-    if (filters.categories.length > 0) {
-      result = result.filter(art => filters.categories.includes(art.category));
-    }
-
-    // Kalit so'zlar bo'yicha filter (ko'p tanlovli - barchasiga mos kelishi kerak)
-    if (filters.selectedTags.length > 0) {
-      result = result.filter(art => 
-        filters.selectedTags.every(tag => art.tags.includes(tag))
-      );
-    }
-
-    // Mualliflar bo'yicha filter (ko'p tanlovli)
-    if (filters.selectedAuthors.length > 0) {
-      result = result.filter(art => filters.selectedAuthors.includes(art.author.id));
-    }
-
-    // Kengaytirilgan qidiruv filtrlari
-    if (filters.advTitle?.trim()) {
-      result = result.filter(art => art.title.toLowerCase().includes(filters.advTitle!.toLowerCase()));
-    }
-    if (filters.advAuthor?.trim()) {
-      result = result.filter(art => art.author.name.toLowerCase().includes(filters.advAuthor!.toLowerCase()));
-    }
-    if (filters.advKeywords?.trim()) {
-      result = result.filter(art => art.tags.some(tag => tag.toLowerCase().includes(filters.advKeywords!.toLowerCase())));
-    }
-    if (filters.advPublisher?.trim()) {
-      result = result.filter(art => art.publisher?.toLowerCase().includes(filters.advPublisher!.toLowerCase()));
-    }
-    if (filters.advDoi?.trim()) {
-      result = result.filter(art => art.doi?.toLowerCase().includes(filters.advDoi!.toLowerCase()));
-    }
-    if (filters.advAbstract?.trim()) {
-      result = result.filter(art => art.summary.toLowerCase().includes(filters.advAbstract!.toLowerCase()) || art.content.toLowerCase().includes(filters.advAbstract!.toLowerCase()));
-    }
-
-    // Saralash
-    result.sort((a, b) => {
-      if (filters.sortBy === 'views') {
-        return b.views - a.views;
-      }
-      if (filters.sortBy === 'citations') {
-        return (b.citationsCount || 0) - (a.citationsCount || 0);
-      }
-      // date bo'yicha saralash
-      return new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime();
-    });
-
-    return result;
-  }, [filters]);
 
   const handleFilterChange = (newFilters: Partial<FilterState>) => {
     setFilters(prev => ({ ...prev, ...newFilters }));
@@ -162,17 +130,10 @@ function App() {
     });
   };
 
-  const isHome = currentPath === 'home';
-  const ARTICLES_PER_PAGE = 20;
-  const totalPages = Math.ceil(filteredAndSortedArticles.length / ARTICLES_PER_PAGE);
+  const ARTICLES_PER_PAGE = isHome ? 6 : 20;
+  const totalPages = Math.ceil(totalArticles / ARTICLES_PER_PAGE) || 1;
 
-  const displayedArticles = useMemo(() => {
-    if (isHome) {
-      return [...mockArticles].sort((a, b) => b.views - a.views).slice(0, 6);
-    }
-    const startIndex = (currentPage - 1) * ARTICLES_PER_PAGE;
-    return filteredAndSortedArticles.slice(startIndex, startIndex + ARTICLES_PER_PAGE);
-  }, [isHome, filteredAndSortedArticles, currentPage]);
+  const displayedArticles = articles;
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', backgroundColor: 'var(--bg-main)' }}>
@@ -279,7 +240,7 @@ function App() {
                         {!isHome && filters.selectedTags.length > 0 && ` (${filters.selectedTags.map(t => `#${t}`).join(', ')})`}
                       </h3>
                       <span style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>
-                        {isHome ? 'TOP 6' : `Jami: ${filteredAndSortedArticles.length} ta maqola`}
+                        {isHome ? 'TOP 6' : `Jami: ${totalArticles} ta maqola`}
                       </span>
                     </div>
 

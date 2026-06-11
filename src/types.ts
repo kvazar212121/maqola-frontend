@@ -7,34 +7,26 @@ export interface SocialLinks {
 }
 
 export interface Author {
-  id: string;
   name: string;
-  avatar: string; // URL yoki rang/harf generatori uchun
-  bio: string;
-  role: string;
-  institution?: string; // Muallif ishlaydigan universitet/tashkilot
-  socialLinks: SocialLinks;
+  affiliation?: string;
+  orcid?: string;
 }
 
 export interface Article {
   id: string;
   title: string;
-  summary: string;
-  content: string; // To'liq maqola matni (Markdown formatida bo'lishi mumkin)
-  author: Author;
-  publishedAt: string; // ISO formatdagi sana yoki chiroyli yozilgan sana
-  readTime: number; // o'qish vaqti (daqiqa)
-  category: string;
-  tags: string[];
-  views: number;
-  likes: number;
-  featured?: boolean;
-  doi?: string; // Digital Object Identifier - ilmiy maqolalar uchun muhim havola
-  publisher?: string; // Nashriyot nomi (masalan, IEEE, Springer, O'zMU xabarlari)
-  pdfUrl?: string; // PDF faylni ko'rish va yuklab olish uchun havola
-  downloadUrl?: string; // Eski havola
-  externalUrl?: string; // Asl manba havolasi (link)
-  citationsCount?: number; // Iqtiboslar soni
+  accessType?: string;
+  authors: Author[];
+  abstract: string;
+  keyWords: string[];
+  journal?: string;
+  publisher?: string;
+  publisherDate?: string;
+  doi?: string;
+  url?: string;
+  pdfUrl?: string;
+  sourceUrl?: string;
+  viewsCount: number;
 }
 
 export type CategoryType = 'Barchasi' | 'Texnologiya' | 'Ilmiy' | 'Tibbiyot' | 'Iqtisodiyot' | 'Jamiyat';

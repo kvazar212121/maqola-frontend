@@ -45,11 +45,9 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({ article, onSelect }) =
           fontWeight: 600,
           fontFamily: 'var(--font-sans)'
         }}>
-          {article.category}
+          {article.journal || article.accessType || 'Ilmiy maqola'}
         </span>
-        <span>{article.publishedAt}</span>
-        <span>•</span>
-        <span>{article.readTime} daqiqa</span>
+        <span>{article.publisherDate}</span>
       </div>
 
       {/* Sarlavha (Original shrift saqlanadi) */}
@@ -71,9 +69,9 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({ article, onSelect }) =
         fontFamily: 'var(--font-sans)'
       }}>
         <span style={{ color: 'var(--text-primary)', fontWeight: 500 }}>
-          {article.author.name}
+          {article.authors && article.authors.length > 0 ? article.authors[0].name : "Noma'lum muallif"}
         </span>
-        {article.author.institution && ` — ${article.author.institution}`}
+        {article.authors && article.authors.length > 0 && article.authors[0].affiliation && ` — ${article.authors[0].affiliation}`}
       </div>
 
       {/* Tavsif */}
@@ -84,7 +82,12 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({ article, onSelect }) =
         marginTop: '8px',
         marginBottom: '12px'
       }}>
-        {article.summary}
+        {(() => {
+          if (!article.abstract || article.abstract === 'n/a') return '';
+          // HTML teglarni olib tashlash
+          const clean = article.abstract.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&#39;/g, "'").replace(/&quot;/g, '"');
+          return clean.length > 200 ? clean.substring(0, 200) + '...' : clean;
+        })()}
       </p>
 
       {/* Pastki qator: DOI, Statistika, Havolalar */}
@@ -103,6 +106,10 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({ article, onSelect }) =
         
         {/* DOI */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+            <Eye size={16} />
+            <span>{article.viewsCount}</span>
+          </div>
           {article.doi && (
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
               <span style={{ fontWeight: 600 }}>DOI:</span>
@@ -126,20 +133,11 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({ article, onSelect }) =
 
         {/* Statistika va Havolalar */}
         <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
-          <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }} title="Ko'rishlar">
-            <Eye size={14} /> {article.views}
-          </span>
-          <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }} title="Yoqtirishlar">
-            <ThumbsUp size={14} /> {article.likes}
-          </span>
-          <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }} title="Iqtiboslar">
-            <Quote size={14} /> {article.citationsCount || 0}
-          </span>
-          
+          {/* Likes and citations count removed as backend doesn't provide them */}
           <div style={{ display: 'flex', gap: '8px', marginLeft: '8px' }}>
-            {article.downloadUrl && (
+            {article.url && (
               <a 
-                href={article.downloadUrl} 
+                href={article.url} 
                 target="_blank" 
                 rel="noreferrer"
                 style={{ 
@@ -150,9 +148,9 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({ article, onSelect }) =
                 <Download size={14} /> PDF
               </a>
             )}
-            {article.externalUrl && (
+            {article.sourceUrl && (
               <a 
-                href={article.externalUrl} 
+                href={article.sourceUrl} 
                 target="_blank" 
                 rel="noreferrer"
                 style={{ 
