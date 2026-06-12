@@ -58,7 +58,7 @@ export const Header: React.FC<HeaderProps> = ({ currentPath }) => {
           <a href="#/about" style={{ color: currentPath === 'about' ? 'white' : 'rgba(255,255,255,0.8)' }}>Loyiha haqida</a>
         </nav>
 
-        {/* Kirish va Ro'yxatdan o'tish tugmalari (Zenodo Style) */}
+        {/* Kirish tugmasi */}
         <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
           <button 
             style={{ 
@@ -76,23 +76,7 @@ export const Header: React.FC<HeaderProps> = ({ currentPath }) => {
               fontFamily: 'var(--font-sans)'
             }}
           >
-            <LogIn size={16} /> Log In
-          </button>
-          
-          <button 
-            style={{ 
-              backgroundColor: 'var(--accent-orange)', // Zenodo'ning mashhur zarg'aldoq tugmasi
-              color: 'white',
-              border: 'none',
-              borderRadius: '4px',
-              padding: '7px 20px',
-              fontSize: '14px',
-              fontWeight: 600,
-              cursor: 'pointer',
-              fontFamily: 'var(--font-sans)'
-            }}
-          >
-            Sign up
+            <LogIn size={16} /> Kirish
           </button>
         </div>
       </div>

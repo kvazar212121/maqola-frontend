@@ -69,7 +69,8 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({ article, onSelect }) =
         fontFamily: 'var(--font-sans)'
       }}>
         <span style={{ color: 'var(--text-primary)', fontWeight: 500 }}>
-          {article.authors && article.authors.length > 0 ? article.authors[0].name : "Noma'lum muallif"}
+          <span style={{ color: 'var(--text-secondary)', fontWeight: 400 }}>Muallif: </span>
+          {article.authors && article.authors.length > 0 ? article.authors[0].name : "Noma'lum"}
         </span>
         {article.authors && article.authors.length > 0 && article.authors[0].affiliation && ` — ${article.authors[0].affiliation}`}
       </div>

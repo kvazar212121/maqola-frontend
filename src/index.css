@@ -21,10 +21,10 @@
   --shadow-color: #e5e5e5;     
   --bg-header-rgba: #005baa;   /* Header endi to'liq ko'k bo'ladi */
   
-  /* Shriftlar */
-  --font-sans: 'Inter', sans-serif;
-  --font-heading: 'Cinzel', serif;
-  --font-article: 'Merriweather', Georgia, serif;
+  /* Shriftlar - Ko'p qo'llaniladigan standart shriftlar (Inter va Times New Roman) */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-heading: var(--font-sans);
+  --font-article: 'Times New Roman', Times, Georgia, serif;
   
   /* Burchaklar */
   --radius-sharp: 4px;
@@ -77,8 +77,6 @@ a {
 
 .sharp-panel:hover {
   border-color: var(--border-color-hover);
-  transform: translate(-2px, -2px);
-  box-shadow: 6px 6px 0px 0px var(--shadow-color);
 }
 
 /* Faol / bosiladigan panellar uchun */

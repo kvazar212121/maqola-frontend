@@ -162,7 +162,7 @@ export const ArticlePage: React.FC<ArticlePageProps> = ({
               {/* Fayllar (Files) Bo'limi */}
               {(article.pdfUrl || article.url) && (() => {
                 const rawPdfUrl = article.pdfUrl || article.url;
-                const proxyUrl = `http://localhost:8080/api/v1/proxy/pdf?url=${encodeURIComponent(rawPdfUrl)}`;
+                const proxyUrl = `https://api-ilmdata.csti.uz/api/v1/proxy/pdf?url=${encodeURIComponent(rawPdfUrl)}`;
                 return (
                 <div style={{ marginTop: '40px' }}>
                   <h3 style={{ fontSize: '20px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '16px', borderBottom: '1px solid var(--border-color)', paddingBottom: '8px' }}>

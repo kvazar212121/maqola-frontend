@@ -25,7 +25,7 @@ function App() {
   const [currentPage, setCurrentPage] = useState(1);
   const [articles, setArticles] = useState<Article[]>([]);
   const [totalArticles, setTotalArticles] = useState(0);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   // Ref orqali eng oxirgi articles qiymatini saqlash (stale closure muammosini hal qilish)
   const articlesRef = useRef<Article[]>([]);
@@ -45,7 +45,7 @@ function App() {
         setCurrentPath('article');
         window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
 
-        fetch(`http://localhost:8080/api/v1/articles/${id}/views`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ views: 1 }) }).catch(err => {
+        fetch(`https://api-ilmdata.csti.uz/api/v1/articles/${id}/views`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ views: 1 }) }).catch(err => {
           console.warn("Backend view tracking failed:", err);
         });
 
@@ -86,9 +86,17 @@ function App() {
         if (filters.advTitle) params.append('title', filters.advTitle);
         if (filters.advAuthor) params.append('authorName', filters.advAuthor);
         if (filters.advPublisher) params.append('publisher', filters.advPublisher);
-        if (filters.advKeywords) params.append('keyWord', filters.advKeywords);
+        
+        // Agar yon panelda teg tanlangan bo'lsa, uni ham jo'natamiz
+        let keyWordParam = filters.advKeywords || '';
+        if (filters.selectedTags && filters.selectedTags.length > 0) {
+          keyWordParam = keyWordParam ? `${keyWordParam} ${filters.selectedTags[0]}` : filters.selectedTags[0];
+        }
+        if (keyWordParam) {
+          params.append('keyWord', keyWordParam);
+        }
 
-        const res = await fetch(`http://localhost:8080/api/v1/articles?${params.toString()}`);
+        const res = await fetch(`https://api-ilmdata.csti.uz/api/v1/articles?${params.toString()}`);
         const json = await res.json();
         if (json.data) {
           setArticles(json.data);
@@ -103,10 +111,7 @@ function App() {
     fetchArticles();
   }, [isHome, currentPage, filters]);
 
-  const allTags = useMemo(() => {
-    // Backend API'dan barcha teglarni olish kerak, ammo hozircha statik
-    return ['Texnologiya', 'Sun\'iy intellekt', 'Tibbiyot', 'Iqtisodiyot', 'IT'];
-  }, []);
+
 
   const handleFilterChange = (newFilters: Partial<FilterState>) => {
     setFilters(prev => ({ ...prev, ...newFilters }));
@@ -152,7 +157,7 @@ function App() {
       ) : (
         <>
           {/* Hero faqat bosh sahifada */}
-          {isHome && <Hero />}
+          {isHome && <Hero totalArticles={totalArticles} />}
 
           {/* Asosiy Kontent Bo'limi */}
           <main id="articles-section" style={{ padding: '48px 0', flexGrow: 1 }}>
@@ -170,8 +175,21 @@ function App() {
                   
                   {/* Chap qism: Qidiruv va Maqolalar */}
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    {/* Qidiruv paneli va Kengaytirilgan Qidiruv */}
-                    <div style={{ display: 'flex', gap: '16px', marginBottom: '32px' }}>
+                    {/* Qidiruv paneli va Kengaytirilgan Qidiruv (Sticky) */}
+                    <div style={{ 
+                      display: 'flex', 
+                      gap: '16px', 
+                      marginBottom: '32px',
+                      position: 'sticky',
+                      top: '65px', // Header balandligi ostida
+                      zIndex: 50,
+                      backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                      backdropFilter: 'blur(10px)',
+                      padding: '16px',
+                      margin: '-16px -16px 32px -16px',
+                      borderRadius: '8px',
+                      boxShadow: '0 4px 12px rgba(0,0,0,0.05)'
+                    }}>
                       <div style={{ position: 'relative', flex: 1 }}>
                         <div style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }}>
                           <Search size={18} />
@@ -245,79 +263,109 @@ function App() {
                     </div>
 
                     {/* Maqolalar Ro'yxati */}
-                    {displayedArticles.length > 0 ? (
-                      <>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }} className="articles-list">
-                          {displayedArticles.map(article => (
-                            <ArticleCard key={article.id} article={article} onSelect={() => { window.location.hash = `#/article/${article.id}`; }} />
-                          ))}
-                        </div>
-                        
-                        {/* Pagination Controls */}
-                        {!isHome && totalPages > 1 && (
-                          <div style={{ display: 'flex', justifyContent: 'center', gap: '8px', marginTop: '40px' }}>
-                            <button
-                              onClick={() => {
-                                setCurrentPage(p => Math.max(1, p - 1));
-                                window.scrollTo({ top: 0, behavior: 'smooth' });
-                              }}
-                              disabled={currentPage === 1}
-                              className="sharp-btn"
-                              style={{ padding: '8px 12px', opacity: currentPage === 1 ? 0.5 : 1 }}
-                            >
-                              Oldingi
-                            </button>
-                            {Array.from({ length: totalPages }).map((_, i) => {
-                              const pageNum = i + 1;
-                              if (pageNum === 1 || pageNum === totalPages || (pageNum >= currentPage - 2 && pageNum <= currentPage + 2)) {
-                                return (
-                                  <button
-                                    key={pageNum}
-                                    onClick={() => {
-                                      setCurrentPage(pageNum);
-                                      window.scrollTo({ top: 0, behavior: 'smooth' });
-                                    }}
-                                    className={currentPage === pageNum ? "sharp-btn primary" : "sharp-btn"}
-                                    style={{ padding: '8px 16px' }}
-                                  >
-                                    {pageNum}
-                                  </button>
-                                );
-                              }
-                              if (pageNum === currentPage - 3 || pageNum === currentPage + 3) {
-                                return <span key={`dots-${pageNum}`} style={{ display: 'flex', alignItems: 'center', padding: '0 8px' }}>...</span>;
-                              }
-                              return null;
-                            })}
-                            <button
-                              onClick={() => {
-                                setCurrentPage(p => Math.min(totalPages, p + 1));
-                                window.scrollTo({ top: 0, behavior: 'smooth' });
-                              }}
-                              disabled={currentPage === totalPages}
-                              className="sharp-btn"
-                              style={{ padding: '8px 12px', opacity: currentPage === totalPages ? 0.5 : 1 }}
-                            >
-                              Keyingisi
-                            </button>
+                    <div style={{ position: 'relative', minHeight: isLoading ? '300px' : 'auto' }}>
+                      {isLoading && (
+                        <div style={{
+                          position: 'absolute',
+                          top: 0,
+                          left: 0,
+                          right: 0,
+                          bottom: 0,
+                          backgroundColor: 'rgba(255, 255, 255, 0.4)',
+                          backdropFilter: 'blur(6px)',
+                          zIndex: 10,
+                          display: 'flex',
+                          flexDirection: 'column',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          borderRadius: '8px'
+                        }}>
+                          <div style={{
+                            backgroundColor: 'white',
+                            padding: '24px 32px',
+                            borderRadius: '12px',
+                            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            gap: '12px'
+                          }}>
+                            <Loader2 size={36} color="var(--accent-blue)" style={{ animation: 'spin 1s linear infinite' }} />
+                            <h4 style={{ margin: 0, fontFamily: 'var(--font-heading)', color: 'var(--text-primary)', fontSize: '18px' }}>Yuklanmoqda...</h4>
+                            <style>{`@keyframes spin { 100% { transform: rotate(360deg); } }`}</style>
                           </div>
-                        )}
-                      </>
-                    ) : (
-                      <div className="sharp-panel" style={{ textAlign: 'center', padding: '64px 20px', backgroundColor: 'var(--bg-panel)', borderStyle: 'dashed', borderRadius: '8px' }}>
-                        <Info size={32} color="var(--accent-blue)" style={{ marginBottom: '16px', opacity: 0.8 }} />
-                        <h4 style={{ fontSize: '18px', fontWeight: 500, marginBottom: '8px', color: 'var(--text-primary)' }}>Maqola topilmadi</h4>
-                        <p style={{ color: 'var(--text-secondary)', fontSize: '14px', maxWidth: '380px', margin: '0 auto' }}>Belgilangan qidiruv parametrlari va filtrlarga mos keladigan maqola topilmadi.</p>
-                      </div>
-                    )}
+                        </div>
+                      )}
+
+                      {displayedArticles.length > 0 ? (
+                        <>
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }} className="articles-list">
+                            {displayedArticles.map(article => (
+                              <ArticleCard key={article.id} article={article} onSelect={() => { window.location.hash = `#/article/${article.id}`; }} />
+                            ))}
+                          </div>
+                          
+                          {/* Pagination Controls */}
+                          {!isHome && totalPages > 1 && (
+                            <div style={{ display: 'flex', justifyContent: 'center', gap: '8px', marginTop: '40px' }}>
+                              <button
+                                onClick={() => {
+                                  setCurrentPage(p => Math.max(1, p - 1));
+                                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                                }}
+                                disabled={currentPage === 1}
+                                className="sharp-btn"
+                                style={{ padding: '8px 12px', opacity: currentPage === 1 ? 0.5 : 1 }}
+                              >
+                                Oldingi
+                              </button>
+                              {Array.from({ length: totalPages }).map((_, i) => {
+                                const pageNum = i + 1;
+                                if (pageNum === 1 || pageNum === totalPages || (pageNum >= currentPage - 2 && pageNum <= currentPage + 2)) {
+                                  return (
+                                    <button
+                                      key={pageNum}
+                                      onClick={() => {
+                                        setCurrentPage(pageNum);
+                                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                                      }}
+                                      className={currentPage === pageNum ? "sharp-btn primary" : "sharp-btn"}
+                                      style={{ padding: '8px 16px' }}
+                                    >
+                                      {pageNum}
+                                    </button>
+                                  );
+                                }
+                                if (pageNum === currentPage - 3 || pageNum === currentPage + 3) {
+                                  return <span key={`dots-${pageNum}`} style={{ display: 'flex', alignItems: 'center', padding: '0 8px' }}>...</span>;
+                                }
+                                return null;
+                              })}
+                              <button
+                                onClick={() => {
+                                  setCurrentPage(p => Math.min(totalPages, p + 1));
+                                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                                }}
+                                disabled={currentPage === totalPages}
+                                className="sharp-btn"
+                                style={{ padding: '8px 12px', opacity: currentPage === totalPages ? 0.5 : 1 }}
+                              >
+                                Keyingisi
+                              </button>
+                            </div>
+                          )}
+                        </>
+                      ) : isLoading ? null : (
+                        <div className="sharp-panel" style={{ textAlign: 'center', padding: '64px 20px', backgroundColor: 'var(--bg-panel)', borderStyle: 'dashed', borderRadius: '8px' }}>
+                          <Info size={32} color="var(--accent-blue)" style={{ marginBottom: '16px', opacity: 0.8 }} />
+                          <h4 style={{ fontSize: '18px', fontWeight: 500, marginBottom: '8px', color: 'var(--text-primary)' }}>Maqola topilmadi</h4>
+                          <p style={{ color: 'var(--text-secondary)', fontSize: '14px', maxWidth: '380px', margin: '0 auto' }}>Belgilangan qidiruv parametrlari va filtrlarga mos keladigan maqola topilmadi.</p>
+                        </div>
+                      )}
+                    </div>
                   </div>
 
-                  {/* O'ng qism: Vertikal Sidebar Filtr (Faqat Maqolalar sahifasida chiqadi) */}
-                  {!isHome && (
-                    <aside style={{ width: '320px', flexShrink: 0, position: 'sticky', top: '24px' }}>
-                      <FilterPanel filters={filters} onFilterChange={handleFilterChange} allTags={allTags} />
-                    </aside>
-                  )}
+
                 </div>
               </div>
             </div>
@@ -366,13 +414,35 @@ function App() {
               </ul>
             </div>
 
-            <div style={{ flex: '1 1 200px' }}>
-              <h4 style={{ fontFamily: 'var(--font-heading)', fontSize: '16px', fontWeight: 600, marginBottom: '16px', color: 'white' }}>Foydali havolalar</h4>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '13px' }}>
-                <a href="#about" style={{ color: 'rgba(255,255,255,0.8)', textDecoration: 'none' }}>Loyiha haqida</a>
-                <a href="#terms" style={{ color: 'rgba(255,255,255,0.8)', textDecoration: 'none' }}>Foydalanish shartlari</a>
-                <a href="#contacts" style={{ color: 'rgba(255,255,255,0.8)', textDecoration: 'none' }}>Aloqa</a>
-                <a href="#faq" style={{ color: 'rgba(255,255,255,0.8)', textDecoration: 'none' }}>Ko'p beriladigan savollar</a>
+            <div style={{ flex: '1 1 400px' }}>
+              <h4 style={{ fontFamily: 'var(--font-heading)', fontSize: '16px', fontWeight: 600, marginBottom: '16px', color: 'white' }}>Ma'lumotlar bazalari</h4>
+              <div style={{ 
+                display: 'grid', 
+                gridTemplateColumns: 'repeat(3, 1fr)', 
+                gap: '8px 16px', 
+                fontSize: '13px',
+                color: 'rgba(255,255,255,0.8)'
+              }}>
+                <span>OpenAlex</span>
+                <span>Crossref</span>
+                <span>PubMed</span>
+                <span>arXiv</span>
+                <span>DOAJ</span>
+                <span>OpenAIRE</span>
+                <span>BASE</span>
+                <span>CORE</span>
+                <span>DataCite</span>
+                <span>OpenCitations</span>
+                <span>ORCID</span>
+                <span>ROR</span>
+                <span>Unpaywall</span>
+                <span>Europe PMC</span>
+                <span>ERIC</span>
+                <span>SSRN</span>
+                <span>RePEc</span>
+                <span>Zenodo</span>
+                <span>HAL</span>
+                <span>OSF Preprints</span>
               </div>
             </div>
           </div>

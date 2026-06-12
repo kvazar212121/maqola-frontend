@@ -1,128 +1,141 @@
 import React from 'react';
-import { FileText, Users, Award } from 'lucide-react';
+import { FileText, Users } from 'lucide-react';
 
-interface HeroProps {}
+interface HeroProps {
+  totalArticles?: number;
+}
 
-export const Hero: React.FC<HeroProps> = () => {
+export const Hero: React.FC<HeroProps> = ({ totalArticles = 0 }) => {
   return (
     <section style={{
       padding: '72px 0 80px 0',
-      background: 'linear-gradient(135deg, #005baa 0%, #003d73 100%)', /* Jiddiy to'q ko'k gradient fon */
+      backgroundColor: '#003d73',
+      backgroundImage: `linear-gradient(to right, #005baa 0%, rgba(0, 61, 115, 0.9) 45%, rgba(0, 61, 115, 0.1) 100%), url('/1.jpg')`,
+      backgroundPosition: 'center, center right',
+      backgroundRepeat: 'no-repeat, no-repeat',
+      backgroundSize: 'auto, cover',
       color: 'white',
-      textAlign: 'center',
       borderBottom: '1px solid rgba(0,0,0,0.1)'
     }}>
       <div className="app-container" style={{
         display: 'flex',
         flexDirection: 'column',
-        alignItems: 'center',
         justifyContent: 'center',
         maxWidth: '1400px',
-        margin: '0 auto'
+        margin: '0 auto',
+        padding: '0 24px'
       }}>
-        <h1 style={{
-          fontSize: 'clamp(32px, 5vw, 48px)',
-          fontWeight: 600,
-          fontFamily: 'var(--font-heading)',
-          lineHeight: '1.2',
-          marginBottom: '20px',
-          letterSpacing: '0.5px',
-          color: 'white',
+        <div style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
           textAlign: 'center',
           width: '100%'
         }}>
-          Ilmiy maqolalar va meta-ma'lumotlar bazasi
-        </h1>
-        <p style={{
-          color: 'rgba(255, 255, 255, 0.85)',
-          fontSize: '16px',
-          lineHeight: '1.6',
-          maxWidth: '680px',
-          marginBottom: '48px',
-          fontFamily: 'var(--font-sans)'
-        }}>
-          Turli nashriyot, ilmiy jurnallar va platformalardan yig'ilgan ilmiy maqolalar, mualliflar, DOI havolalari va bibliografik ma'lumotlar bazasi.
-        </p>
-
-        {/* Bazadagi jami statistika panellari */}
+          <h1 style={{
+            fontSize: 'clamp(32px, 5vw, 48px)',
+            fontWeight: 600,
+            fontFamily: 'var(--font-heading)',
+            lineHeight: '1.2',
+            marginBottom: '20px',
+            letterSpacing: '0.5px',
+            color: 'white',
+            maxWidth: '800px'
+          }}>
+            O'zbekistonning eng yirik ilmiy maqolalar bazasi
+          </h1>
+          <p style={{
+            fontSize: '18px',
+            color: 'rgba(255, 255, 255, 0.9)',
+            marginBottom: '48px',
+            maxWidth: '700px',
+            lineHeight: '1.6',
+            fontWeight: 300
+          }}>
+            Minglab ilmiy nashrlar, tadqiqotlar va maqolalarni bir joydan toping. Ilmiy izlanishlaringiz uchun ishonchli manba.
+          </p>
+        </div>
+        
         <div style={{
           display: 'flex',
-          justifyContent: 'center',
-          gap: '24px',
-          flexWrap: 'wrap',
+          flexDirection: 'column',
+          gap: '16px',
           width: '100%',
-          maxWidth: '900px'
+          maxWidth: '350px'
         }}>
-          
-          {/* Maqolalar soni */}
           <div style={{
-            flex: '1 1 240px',
-            padding: '24px',
-            backgroundColor: 'white',
-            borderRadius: '6px',
+            backgroundColor: 'rgba(255, 255, 255, 0.1)',
+            backdropFilter: 'blur(10px)',
+            border: '1px solid rgba(255, 255, 255, 0.2)',
+            padding: '20px 24px',
+            borderRadius: '12px',
             display: 'flex',
-            flexDirection: 'column',
             alignItems: 'center',
-            gap: '12px',
-            boxShadow: '0 10px 30px rgba(0, 0, 0, 0.15)',
-            border: 'none',
-            transform: 'translateY(10px)'
-          }}>
-            <FileText size={28} color="var(--accent-blue)" />
-            <span style={{ fontSize: '32px', fontWeight: 700, color: 'var(--text-primary)', fontFamily: 'var(--font-sans)', letterSpacing: '-0.5px', lineHeight: '1' }}>
-              4.8 MLN+
-            </span>
-            <span style={{ fontSize: '12px', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '1px', fontWeight: 600 }}>
-              Ilmiy maqolalar
-            </span>
+            gap: '20px',
+            transition: 'transform 0.3s ease',
+            cursor: 'default'
+          }}
+          onMouseEnter={(e) => e.currentTarget.style.transform = 'translateX(5px)'}
+          onMouseLeave={(e) => e.currentTarget.style.transform = 'translateX(0)'}
+          >
+            <div style={{
+              width: '48px',
+              height: '48px',
+              borderRadius: '50%',
+              backgroundColor: 'rgba(255, 255, 255, 0.15)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: 'white'
+            }}>
+              <FileText size={24} />
+            </div>
+            <div>
+              <div style={{ fontSize: '28px', fontWeight: 700, color: 'white', fontFamily: 'var(--font-heading)', lineHeight: 1.2 }}>
+                {totalArticles > 0 ? totalArticles.toLocaleString() : "0"}
+              </div>
+              <div style={{ fontSize: '12px', fontWeight: 500, color: 'rgba(255, 255, 255, 0.8)', textTransform: 'uppercase', letterSpacing: '1px', marginTop: '4px' }}>
+                ILMIY MAQOLALAR
+              </div>
+            </div>
           </div>
 
-          {/* Tadqiqotchilar soni */}
           <div style={{
-            flex: '1 1 240px',
-            padding: '24px',
-            backgroundColor: 'white',
-            borderRadius: '6px',
+            backgroundColor: 'rgba(255, 255, 255, 0.1)',
+            backdropFilter: 'blur(10px)',
+            border: '1px solid rgba(255, 255, 255, 0.2)',
+            padding: '20px 24px',
+            borderRadius: '12px',
             display: 'flex',
-            flexDirection: 'column',
             alignItems: 'center',
-            gap: '12px',
-            boxShadow: '0 10px 30px rgba(0, 0, 0, 0.15)',
-            border: 'none',
-            transform: 'translateY(10px)'
-          }}>
-            <Users size={28} color="var(--accent-orange)" />
-            <span style={{ fontSize: '32px', fontWeight: 700, color: 'var(--text-primary)', fontFamily: 'var(--font-sans)', letterSpacing: '-0.5px', lineHeight: '1' }}>
-              180,000+
-            </span>
-            <span style={{ fontSize: '12px', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '1px', fontWeight: 600 }}>
-              Tadqiqotchilar
-            </span>
+            gap: '20px',
+            transition: 'transform 0.3s ease',
+            cursor: 'default'
+          }}
+          onMouseEnter={(e) => e.currentTarget.style.transform = 'translateX(5px)'}
+          onMouseLeave={(e) => e.currentTarget.style.transform = 'translateX(0)'}
+          >
+            <div style={{
+              width: '48px',
+              height: '48px',
+              borderRadius: '50%',
+              backgroundColor: 'rgba(255, 255, 255, 0.15)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: 'white'
+            }}>
+              <Users size={24} />
+            </div>
+            <div>
+              <div style={{ fontSize: '28px', fontWeight: 700, color: 'white', fontFamily: 'var(--font-heading)', lineHeight: 1.2 }}>
+                180,000+
+              </div>
+              <div style={{ fontSize: '12px', fontWeight: 500, color: 'rgba(255, 255, 255, 0.8)', textTransform: 'uppercase', letterSpacing: '1px', marginTop: '4px' }}>
+                TADQIQOTCHILAR
+              </div>
+            </div>
           </div>
-
-          {/* Iqtiboslar soni */}
-          <div style={{
-            flex: '1 1 240px',
-            padding: '24px',
-            backgroundColor: 'white',
-            borderRadius: '6px',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: '12px',
-            boxShadow: '0 10px 30px rgba(0, 0, 0, 0.15)',
-            border: 'none',
-            transform: 'translateY(10px)'
-          }}>
-            <Award size={28} color="var(--accent-blue)" />
-            <span style={{ fontSize: '32px', fontWeight: 700, color: 'var(--text-primary)', fontFamily: 'var(--font-sans)', letterSpacing: '-0.5px', lineHeight: '1' }}>
-              56 MLN+
-            </span>
-            <span style={{ fontSize: '12px', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '1px', fontWeight: 600 }}>
-              Jami iqtiboslar
-            </span>
-          </div>
-
         </div>
       </div>
     </section>
